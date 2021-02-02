@@ -4,7 +4,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="preseed-to-answers",
+    name="preseed_to_answers",
     version="0.0.1",
     author='Canonical Engineering',
     author_email='ubuntu-dev@lists.ubuntu.com',
