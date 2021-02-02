@@ -1,5 +1,12 @@
 
-from convert import convert
+from convert import Answer, convert
+
+
+def test_answer():
+    line = 'stuff'
+    actual = Answer(line).line
+    expected = line
+    assert expected == actual
 
 
 def test_di_locale():
@@ -9,12 +16,14 @@ def test_di_locale():
         expected = f'Welcome:\n  lang: {locale}'
         assert expected == actual
 
+
 def test_di_locale_extra_stuff():
     locale = 'zz_ZZ'
     line = f' d-i debian-installer/locale string {locale} # locale comment'
     actual = convert(line)
     expected = f'Welcome:\n  lang: {locale}'
     assert expected == actual
+
 
 def test_comment():
     lines = [
@@ -28,5 +37,3 @@ def test_comment():
         actual = convert(line)
         expected = line
         assert expected == actual
-
-
