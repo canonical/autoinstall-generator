@@ -3,6 +3,7 @@ from enum import Enum
 
 
 class ConversionType(Enum):
+    '''Some sort of conversion error happened'''
     UnknownError = 0,
     PassThru = 1,
     OneToOne = 2,
