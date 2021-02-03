@@ -8,7 +8,7 @@ class ConversionType(Enum):
     OneToOne = 2,
 
 
-class Directive:
+class Answer:
     '''
     A structure of values corresponding to how the conversion handled a given
     input line.
@@ -18,7 +18,7 @@ class Directive:
     line : str
         the output data generated from the orig_input line
     orig_input : str
-        the input that was used to generate this Directive
+        the input that was used to generate this Answer
     convert_type : ConversionType
         the type of conversion performed
     '''
@@ -48,12 +48,12 @@ def dispatch(key, value):
 
 
 def convert(line):
-    '''Convert Debian install preseed line to Subiquity directive equivalent.
+    '''Convert Debian install preseed line to Subiquity answer equivalent.
 
     Returns
     -------
-    directive
-        Directive object
+    answer
+        Answer object
     '''
     # assumptions:
     #  can process one line at a time
@@ -62,7 +62,7 @@ def convert(line):
     trimmed = line.strip()
     tokens = trimmed.split(' ')
     if len(tokens) < 4 or tokens[0] != 'd-i':
-        return Directive(line, line, ConversionType.PassThru)
+        return Answer(line, line, ConversionType.PassThru)
 
     convert_type = ConversionType.OneToOne
     output = dispatch(tokens[1], ' '.join(tokens[3:]))
@@ -70,4 +70,4 @@ def convert(line):
     if len(output) < 1:
         convert_type = ConversionType.UnknownError
 
-    return Directive(output, line, convert_type)
+    return Answer(output, line, convert_type)

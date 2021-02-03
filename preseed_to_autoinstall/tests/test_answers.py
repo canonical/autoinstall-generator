@@ -1,22 +1,22 @@
 
-from convert import convert, Directive, ConversionType
+from answers import convert, Answer, ConversionType
 
 
 def trivial(start, finish):
-    directive = convert(start)
+    answer = convert(start)
     expected = finish
-    assert expected == directive.line
-    assert ConversionType.OneToOne == directive.convert_type
+    assert expected == answer.line
+    assert ConversionType.OneToOne == answer.convert_type
 
 
-def test_directive():
+def test_answer():
     orig = 'my input'
     output = 'my output'
     convert_type = ConversionType.PassThru
-    directive = Directive(output, orig, convert_type)
-    assert output == directive.line
-    assert orig == directive.orig_input
-    assert convert_type == directive.convert_type
+    answer = Answer(output, orig, convert_type)
+    assert output == answer.line
+    assert orig == answer.orig_input
+    assert convert_type == answer.convert_type
 
 
 def test_di_locale():
@@ -40,9 +40,9 @@ def test_comment():
         ' ' * 4,
     ]
     for line in lines:
-        directive = convert(line)
-        assert line == directive.line
-        assert ConversionType.PassThru == directive.convert_type
+        answer = convert(line)
+        assert line == answer.line
+        assert ConversionType.PassThru == answer.convert_type
 
 
 def test_di_keymap():
@@ -56,9 +56,9 @@ def test_di_keymap():
 
 def test_di_invalid():
     line = 'd-i stuff/things string asdf'
-    directive = convert(line)
-    assert '' == directive.line
-    assert ConversionType.UnknownError == directive.convert_type
+    answer = convert(line)
+    assert '' == answer.line
+    assert ConversionType.UnknownError == answer.convert_type
 
 
 def test_di_user_fullname():
