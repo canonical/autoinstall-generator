@@ -14,6 +14,11 @@ clean:
 	rm -fr *.egg-info build dist
 .PHONY: clean
 
+distclean: clean
+	-find . -type d -name __pycache__ | xargs rm -fr
+	rm -fr .tox
+.PHONY: distclean
+
 build:
 	python3 -m pep517.build .
 .PHONY: build
