@@ -3,7 +3,6 @@ from enum import Enum
 
 
 class ConversionType(Enum):
-    '''Some sort of conversion error happened'''
     UnknownError = 0,
     PassThru = 1,
     OneToOne = 2,
@@ -29,9 +28,23 @@ class Answer:
         self.convert_type = convert_type
 
 
-# assumptions:
-#  can process one line at a time
-#  whitespace-only lines and comments should pass thru
+conversion_table = {
+    'keyboard-configuration/xkb-keymap': 'Keyboard:\n  layout:',
+    'debian-installer/locale': 'Welcome:\n  lang:',
+    'passwd/user-fullname': 'Identity:\n  realname:',
+    'passwd/username': 'Identity:\n  username:',
+    'passwd/user-password-crypted': 'Identity:\n  password:',
+    'netcfg/hostname': 'Identity:\n  hostname:',
+}
+
+
+def dispatch(key, value):
+    output = ''
+
+    if key in conversion_table:
+        output = ' '.join((conversion_table[key], value))
+
+    return output
 
 
 def convert(line):
@@ -42,11 +55,19 @@ def convert(line):
     answer
         Answer object
     '''
+    # assumptions:
+    #  can process one line at a time
+    #  whitespace-only lines and comments should pass thru
+
     trimmed = line.strip()
     tokens = trimmed.split(' ')
-    if len(tokens) > 3 and tokens[0] == 'd-i':
-        locale = tokens[3]
-        output = f'''Welcome:\n  lang: {locale}'''
-        return Answer(output, line, ConversionType.OneToOne)
+    if len(tokens) < 4 or tokens[0] != 'd-i':
+        return Answer(line, line, ConversionType.PassThru)
 
-    return Answer(line, line, ConversionType.PassThru)
+    convert_type = ConversionType.OneToOne
+    output = dispatch(tokens[1], ' '.join(tokens[3:]))
+
+    if len(output) < 1:
+        convert_type = ConversionType.UnknownError
+
+    return Answer(output, line, convert_type)
