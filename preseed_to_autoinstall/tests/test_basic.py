@@ -20,15 +20,16 @@ def test_directive():
 
 
 def test_di_locale():
+    # FIXME needs .UTF-8 at the end in all cases?
     for locale in ['en_US', 'en_GB']:
         trivial(f'd-i debian-installer/locale string {locale}',
-                f'Welcome:\n  lang: {locale}')
+                f'locale: {locale}')
 
 
 def test_di_locale_extra_stuff():
     locale = 'zz_ZZ'
     trivial(f' d-i debian-installer/locale string {locale} ',
-            f'Welcome:\n  lang: {locale}')
+            f'locale: {locale}')
 
 
 def test_comment():
@@ -47,11 +48,11 @@ def test_comment():
 
 def test_di_keymap():
     # d-i keyboard-configuration/xkb-keymap select us
-    # Keyboard:
-    #   layout: us
+    # keyboard:
+    #   layout: gb
     for keymap in ['us', 'zz']:
         trivial(f'd-i keyboard-configuration/xkb-keymap select {keymap}',
-                f'Keyboard:\n  layout: {keymap}')
+                f'keyboard:\n  layout: {keymap}')
 
 
 def test_di_invalid():
@@ -63,24 +64,29 @@ def test_di_invalid():
 
 def test_di_user_fullname():
     value = 'Debian User'
+    # identity:
+    #   realname: ''
     trivial(f'd-i passwd/user-fullname string {value}',
-            f'Identity:\n  realname: {value}')
+            f'identity:\n  realname: {value}')
 
 
 def test_di_username():
     value = 'debian'
+    # username: ubuntu
     trivial(f'd-i passwd/username string {value}',
-            f'Identity:\n  username: {value}')
+            f'identity:\n  username: {value}')
 
 
 def test_di_user_password_crypted():
     value = '$6$wdAcoXrU039hKYPd$508Qvbe7ObUnxoj15DRCkzC3qO7edjH0VV7BPNRDYK4' \
             'QR8ofJaEEF2heacn0QgD.f8pO8SNp83XNdWG6tocBM1'
+    # password: '$6$wdAcoXrU039hKYPd$508Qvbe...'
     trivial(f'd-i passwd/user-password-crypted string {value}',
-            f'Identity:\n  password: {value}')
+            f'identity:\n  password: {value}')
 
 
 def test_di_hostname():
     value = 'somehost'
+    # hostname: ubuntu
     trivial(f'd-i netcfg/hostname string {value}',
-            f'Identity:\n  hostname: {value}')
+            f'identity:\n  hostname: {value}')
