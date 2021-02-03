@@ -29,12 +29,12 @@ class Directive:
 
 
 conversion_table = {
-    'keyboard-configuration/xkb-keymap': 'Keyboard:\n  layout:',
-    'debian-installer/locale': 'Welcome:\n  lang:',
-    'passwd/user-fullname': 'Identity:\n  realname:',
-    'passwd/username': 'Identity:\n  username:',
-    'passwd/user-password-crypted': 'Identity:\n  password:',
-    'netcfg/hostname': 'Identity:\n  hostname:',
+    'keyboard-configuration/xkb-keymap': 'keyboard:\n  layout:',
+    'debian-installer/locale': 'locale:',
+    'passwd/user-fullname': 'identity:\n  realname:',
+    'passwd/username': 'identity:\n  username:',
+    'passwd/user-password-crypted': 'identity:\n  password:',
+    'netcfg/hostname': 'identity:\n  hostname:',
 }
 
 
