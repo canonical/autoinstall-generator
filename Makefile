@@ -25,3 +25,6 @@ test:
 lint:
 	flake8
 .PHONY: lint
+
+check: lint test
+.PHONY: check
