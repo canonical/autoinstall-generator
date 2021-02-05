@@ -1,4 +1,5 @@
 
+import copy
 from enum import Enum
 
 
@@ -15,15 +16,16 @@ class Directive:
 
     Attributes
     ----------
-    line : str
-        the output data generated from the orig_input line
+    tree : dict
+        the output data generated from the orig_input line in the form
+        of a hierarchy of dictionaries
     orig_input : str
         the input that was used to generate this Directive
     convert_type : ConversionType
         the type of conversion performed
     '''
-    def __init__(self, line, orig_input, convert_type):
-        self.line = line
+    def __init__(self, tree, orig_input, convert_type):
+        self.tree = tree
         self.orig_input = orig_input
         self.convert_type = convert_type
 
@@ -38,16 +40,21 @@ def netmask_bits(value):
     return bits
 
 
-def netmask(value):
-    bits = netmask_bits(value)
+# def netmask(value):
+#     bits = netmask_bits(value)
 
-    return f'''network:
-  ethernets:
-    any:
-      match:
-        name: en*'
-      addresses:
-        - {bits}'''
+#     # FIXME dependency on ip address
+#     # FIXME dashed format
+#     return {
+#         'network': {
+#             'ethernets': {
+#                 'any': {
+#                     'match': {'name': 'en*'},
+#                     'addresses': bits,
+#                 }
+#             }
+#         }
+#     }
 
 
 def nameservers(value):
@@ -62,27 +69,25 @@ def nameservers(value):
 
 # values that have a straightforward mapping can be just sent along
 preseedmap = {
-    'keyboard-configuration/xkb-keymap': 'keyboard:\n  layout:',
-    'debian-installer/locale': 'locale:',
-    'passwd/user-fullname': 'identity:\n  realname:',
-    'passwd/username': 'identity:\n  username:',
-    'passwd/user-password-crypted': 'identity:\n  password:',
-    'netcfg/hostname': 'identity:\n  hostname:',
-    'netcfg/get_ipaddress': '''network:
-  ethernets:
-    any:
-      match:
-        name: en*'
-      addresses:
-        -''',
-    'netcfg/get_gateway': '''network:
-  ethernets:
-    any:
-      match:
-        name: en*'
-      gateway4:''',
-    'netcfg/get_netmask': netmask,
-    'netcfg/get_nameservers': nameservers,
+    'keyboard-configuration/xkb-keymap': {'keyboard': {'layout': None}},
+    'debian-installer/locale': {'locale': None},
+    'passwd/user-fullname': {'identity': {'realname': None}},
+    'passwd/username': {'identity': {'username': None}},
+    'passwd/user-password-crypted': {'identity': {'password': None}},
+    'netcfg/hostname': {'identity': {'hostname': None}},
+    # 'netcfg/get_netmask': netmask,
+    'netcfg/get_gateway': {'network': {'ethernets': {'any': {
+        'match': {'name': 'en*'},
+        'gateway4': None,
+    }}}},
+    # 'netcfg/get_nameservers': nameservers,
+    # 'netcfg/get_ipaddress': '''network:
+    # ethernets:
+    #   any:
+    #     match:
+    #       name: en*'
+    #     addresses:
+    #       -''',
 }
 
 
@@ -94,7 +99,8 @@ def dispatch(key, value):
         if callable(mapped_key):
             output = mapped_key(value)
         else:
-            output = ' '.join((mapped_key, value))
+            output = copy.deepcopy(mapped_key)
+            output = insert_at_none(output, value)
 
     return output
 
@@ -114,12 +120,24 @@ def convert(line):
     trimmed = line.strip()
     tokens = trimmed.split(' ')
     if len(tokens) < 4 or tokens[0] != 'd-i':
-        return Directive(line, line, ConversionType.PassThru)
+        return Directive({}, line, ConversionType.PassThru)
 
     convert_type = ConversionType.OneToOne
     output = dispatch(tokens[1], ' '.join(tokens[3:]))
 
     if len(output) < 1:
         convert_type = ConversionType.UnknownError
+        output = {}
 
     return Directive(output, line, convert_type)
+
+
+def insert_at_none(tree, value):
+    for key in tree:
+        cur = tree[key]
+        if type(cur) is dict:
+            tree[key] = insert_at_none(cur, value)
+        elif cur is None:
+            tree[key] = value
+            break
+    return tree

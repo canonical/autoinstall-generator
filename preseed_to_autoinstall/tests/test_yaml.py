@@ -1,4 +1,5 @@
 
+from merging import merge
 import yaml
 
 
@@ -66,3 +67,18 @@ def test_to_file(tmpdir):
     with open(expected_yaml_path, 'r') as expected_yaml_file:
         expected_yaml = expected_yaml_file.read()
         assert expected_yaml == dest.read()
+
+
+def test_merge():
+    directives = [
+        {'identity': {'hostname': 'ubuntu'}},
+        {'identity': {'password': password}},
+        {'identity': {'realname': ''}},
+        {'identity': {'username': 'ubuntu'}},
+    ]
+
+    intersection = {}
+    for directive in directives:
+        intersection = merge(intersection, directive)
+
+    assert identity == intersection
