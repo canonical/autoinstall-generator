@@ -40,34 +40,20 @@ def netmask_bits(value):
     return bits
 
 
-# def netmask(value):
-#     bits = netmask_bits(value)
+def netmask(value):
+    # FIXME dependency on ip address
+    bits = netmask_bits(value)
+    tree = {'network': {'ethernets': {'any': {
+        'match': {'name': 'en*'},
+        'addresses': [],
+    }}}}
 
-#     # FIXME dependency on ip address
-#     # FIXME dashed format
-#     return {
-#         'network': {
-#             'ethernets': {
-#                 'any': {
-#                     'match': {'name': 'en*'},
-#                     'addresses': bits,
-#                 }
-#             }
-#         }
-#     }
+    return insert_at_none(tree, bits)
 
 
-def nameservers(value):
-    return f'''network:
-  ethernets:
-    any:
-      match:
-        name: en*'
-      nameservers:
-        addresses: [{value}]'''
-
-
-# values that have a straightforward mapping can be just sent along
+# Translation table to map from preseed values to autoinstall ones.
+# key: d-i style directive key
+# value: dictionary for simple mapping, function for more exciting one
 preseedmap = {
     'keyboard-configuration/xkb-keymap': {'keyboard': {'layout': None}},
     'debian-installer/locale': {'locale': None},
@@ -75,19 +61,19 @@ preseedmap = {
     'passwd/username': {'identity': {'username': None}},
     'passwd/user-password-crypted': {'identity': {'password': None}},
     'netcfg/hostname': {'identity': {'hostname': None}},
-    # 'netcfg/get_netmask': netmask,
+    'netcfg/get_netmask': netmask,
     'netcfg/get_gateway': {'network': {'ethernets': {'any': {
         'match': {'name': 'en*'},
         'gateway4': None,
     }}}},
-    # 'netcfg/get_nameservers': nameservers,
-    # 'netcfg/get_ipaddress': '''network:
-    # ethernets:
-    #   any:
-    #     match:
-    #       name: en*'
-    #     addresses:
-    #       -''',
+    'netcfg/get_nameservers': {'network': {'ethernets': {'any': {
+        'match': {'name': 'en*'},
+        'nameservers': {'addresses': []},
+    }}}},
+    'netcfg/get_ipaddress': {'network': {'ethernets': {'any': {
+        'match': {'name': 'en*'},
+        'addresses': [],
+    }}}},
 }
 
 
@@ -99,8 +85,7 @@ def dispatch(key, value):
         if callable(mapped_key):
             output = mapped_key(value)
         else:
-            output = copy.deepcopy(mapped_key)
-            output = insert_at_none(output, value)
+            output = insert_at_none(copy.deepcopy(mapped_key), value)
 
     return output
 
@@ -133,10 +118,13 @@ def convert(line):
 
 
 def insert_at_none(tree, value):
+    '''Walk tree looking for None or empty array, then insert value.'''
     for key in tree:
         cur = tree[key]
         if type(cur) is dict:
             tree[key] = insert_at_none(cur, value)
+        elif type(cur) is list and len(cur) == 0:
+            tree[key] = [value]
         elif cur is None:
             tree[key] = value
             break
