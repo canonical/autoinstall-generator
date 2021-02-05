@@ -26,7 +26,6 @@ def test_directive():
     assert convert_type == directive.convert_type
 
 
-# @pytest.mark.skip('convert to dict instead of line')
 def test_di_locale():
     # FIXME needs .UTF-8 at the end in all cases?
     for locale in ['en_US', 'en_GB']:
@@ -34,7 +33,6 @@ def test_di_locale():
                 {'locale': locale})
 
 
-# @pytest.mark.skip('convert to dict instead of line')
 def test_di_locale_extra_stuff():
     locale = 'zz_ZZ'
     trivial(f' d-i debian-installer/locale string {locale} ',
@@ -55,7 +53,6 @@ def test_comment():
         assert ConversionType.PassThru == directive.convert_type
 
 
-# @pytest.mark.skip('convert to dict instead of line')
 def test_di_keymap():
     # d-i keyboard-configuration/xkb-keymap select us
     # keyboard:
@@ -66,7 +63,6 @@ def test_di_keymap():
                 {'keyboard': {'layout': keymap}})
 
 
-# @pytest.mark.skip('convert to dict instead of line')
 def test_di_invalid():
     line = 'd-i stuff/things string asdf'
     directive = convert(line)
@@ -74,7 +70,6 @@ def test_di_invalid():
     assert ConversionType.UnknownError == directive.convert_type
 
 
-# @pytest.mark.skip('convert to dict instead of line')
 def test_di_user_fullname():
     value = 'Debian User'
     # identity:
@@ -83,7 +78,6 @@ def test_di_user_fullname():
             {'identity': {'realname': value}})
 
 
-# @pytest.mark.skip('convert to dict instead of line')
 def test_di_username():
     value = 'debian'
     # username: value
@@ -91,7 +85,6 @@ def test_di_username():
             {'identity': {'username': value}})
 
 
-# @pytest.mark.skip('convert to dict instead of line')
 def test_di_user_password_crypted():
     value = '$6$wdAcoXrU039hKYPd$508Qvbe7ObUnxoj15DRCkzC3qO7edjH0VV7BPNRDYK4' \
             'QR8ofJaEEF2heacn0QgD.f8pO8SNp83XNdWG6tocBM1'
@@ -100,7 +93,6 @@ def test_di_user_password_crypted():
             {'identity': {'password': value}})
 
 
-# @pytest.mark.skip('convert to dict instead of line')
 def test_di_hostname():
     value = 'somehost'
     # hostname: value
@@ -108,31 +100,26 @@ def test_di_hostname():
             {'identity': {'hostname': value}})
 
 
-@pytest.mark.skip('convert to dict instead of line')
+# @pytest.mark.skip('convert to dict instead of line')
 def test_di_ipaddress():
     value = '192.168.1.42'
     trivial(f'd-i netcfg/get_ipaddress string {value}',
-            f'''network:
-  ethernets:
-    any:
-      match:
-        name: en*'
-      addresses:
-        - {value}''')  # FIXME merge with netmask
+            {'network': {'ethernets': {'any': {
+                'match': {'name': 'en*'},
+                'addresses': [value],
+            }}}}) # FIXME merge with netmask
 
 
-@pytest.mark.skip('convert to dict instead of line')
+# @pytest.mark.skip('convert to dict instead of line')
 def test_di_netmask():
     mask = '255.255.255.0'
     mask_bits = '24'
     trivial(f'd-i netcfg/get_netmask string {mask}',
-            f'''network:
-  ethernets:
-    any:
-      match:
-        name: en*'
-      addresses:
-        - {mask_bits}''')  # FIXME merge with ipaddress
+            {'network': {'ethernets': {'any': {
+                'match': {'name': 'en*'},
+                'addresses': [mask_bits],
+            }}}}) # FIXME merge with ipaddress
+    # FIXME merge with ipaddress
 
 
 def test_netmask_bits():
@@ -145,7 +132,6 @@ def test_netmask_bits():
         assert expected == netmask_bits(key)
 
 
-# @pytest.mark.skip('convert to dict instead of line')
 def test_di_gateway():
     value = '192.168.1.1'
     trivial(f'd-i netcfg/get_gateway string {value}',
@@ -154,17 +140,13 @@ def test_di_gateway():
                 'gateway4': value}}}})
 
 
-@pytest.mark.skip('convert to dict instead of line')
+# @pytest.mark.skip('convert to dict instead of line')
 def test_di_nameservers():
     value = '192.168.1.1'
     trivial(f'd-i netcfg/get_nameservers string {value}',
-            f'''network:
-  ethernets:
-    any:
-      match:
-        name: en*'
-      nameservers:
-        addresses: [{value}]''')
+            {'network': {'ethernets': {'any': {
+                'match': {'name': 'en*'},
+                'nameservers': {'addresses': [value]}}}}})
 
 
 def test_insert_at_none():
@@ -180,4 +162,12 @@ def test_insert_at_none_second():
 
     actual = insert_at_none(b, 1)
     expected = {'a': {'b': 1}}
+    assert expected == actual
+
+
+def test_insert_at_array():
+    a = {'a': []}
+
+    actual = insert_at_none(a, 1)
+    expected = {'a': [1]}
     assert expected == actual

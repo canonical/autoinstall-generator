@@ -82,3 +82,11 @@ def test_merge():
         intersection = merge(intersection, directive)
 
     assert identity == intersection
+
+
+def test_array():
+    a = 'a: [b, c, d]'
+
+    actual = yaml.safe_load(a)
+    expected = {'a': ['b', 'c', 'd']}
+    assert expected == actual
