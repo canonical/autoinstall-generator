@@ -1,5 +1,11 @@
 
-from convert import convert, Directive, ConversionType
+from convert import convert, Directive, ConversionType, netmask_bits
+
+
+# FIXME coallese
+# FIXME actually generate files
+# FIXME leader version
+# FIXME fragments support - to handle ipaddress / netmask
 
 
 def trivial(start, finish):
@@ -90,3 +96,61 @@ def test_di_hostname():
     # hostname: ubuntu
     trivial(f'd-i netcfg/hostname string {value}',
             f'identity:\n  hostname: {value}')
+
+
+def test_di_ipaddress():
+    value = '192.168.1.42'
+    trivial(f'd-i netcfg/get_ipaddress string {value}',
+            f'''network:
+  ethernets:
+    any:
+      match:
+        name: en*'
+      addresses:
+        - {value}''')  # FIXME merge with netmask
+
+
+def test_di_netmask():
+    mask = '255.255.255.0'
+    mask_bits = '24'
+    trivial(f'd-i netcfg/get_netmask string {mask}',
+            f'''network:
+  ethernets:
+    any:
+      match:
+        name: en*'
+      addresses:
+        - {mask_bits}''')  # FIXME merge with ipaddress
+
+
+def test_netmask_bits():
+    table = {
+            '255.255.255.0': '24',
+            '255.255.0.0': '16',
+    }
+    for key in table:
+        expected = table[key]
+        assert expected == netmask_bits(key)
+
+
+def test_di_gateway():
+    value = '192.168.1.1'
+    trivial(f'd-i netcfg/get_gateway string {value}',
+            f'''network:
+  ethernets:
+    any:
+      match:
+        name: en*'
+      gateway4: {value}''')
+
+
+def test_di_nameservers():
+    value = '192.168.1.1'
+    trivial(f'd-i netcfg/get_nameservers string {value}',
+            f'''network:
+  ethernets:
+    any:
+      match:
+        name: en*'
+      nameservers:
+        addresses: [{value}]''')
