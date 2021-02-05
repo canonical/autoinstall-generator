@@ -2,8 +2,7 @@
 all: default
 .PHONY: all
 
-default:
-	:
+default: check
 .PHONY: default
 
 dev-setup:

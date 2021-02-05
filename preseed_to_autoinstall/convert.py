@@ -28,21 +28,73 @@ class Directive:
         self.convert_type = convert_type
 
 
-conversion_table = {
+def netmask_bits(value):
+    # FIXME actually calculate it
+    bits = '0'
+    if value == '255.255.255.0':
+        bits = '24'
+    elif value == '255.255.0.0':
+        bits = '16'
+    return bits
+
+
+def netmask(value):
+    bits = netmask_bits(value)
+
+    return f'''network:
+  ethernets:
+    any:
+      match:
+        name: en*'
+      addresses:
+        - {bits}'''
+
+
+def nameservers(value):
+    return f'''network:
+  ethernets:
+    any:
+      match:
+        name: en*'
+      nameservers:
+        addresses: [{value}]'''
+
+
+# values that have a straightforward mapping can be just sent along
+preseedmap = {
     'keyboard-configuration/xkb-keymap': 'keyboard:\n  layout:',
     'debian-installer/locale': 'locale:',
     'passwd/user-fullname': 'identity:\n  realname:',
     'passwd/username': 'identity:\n  username:',
     'passwd/user-password-crypted': 'identity:\n  password:',
     'netcfg/hostname': 'identity:\n  hostname:',
+    'netcfg/get_ipaddress': '''network:
+  ethernets:
+    any:
+      match:
+        name: en*'
+      addresses:
+        -''',
+    'netcfg/get_gateway': '''network:
+  ethernets:
+    any:
+      match:
+        name: en*'
+      gateway4:''',
+    'netcfg/get_netmask': netmask,
+    'netcfg/get_nameservers': nameservers,
 }
 
 
 def dispatch(key, value):
     output = ''
 
-    if key in conversion_table:
-        output = ' '.join((conversion_table[key], value))
+    if key in preseedmap:
+        mapped_key = preseedmap[key]
+        if callable(mapped_key):
+            output = mapped_key(value)
+        else:
+            output = ' '.join((mapped_key, value))
 
     return output
 
