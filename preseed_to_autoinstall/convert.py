@@ -77,7 +77,7 @@ preseedmap = {
 }
 
 
-def dispatch(key, value):
+def dispatch(line, key, value):
     output = ''
 
     if key in preseedmap:
@@ -87,7 +87,12 @@ def dispatch(key, value):
         else:
             output = insert_at_none(copy.deepcopy(mapped_key), value)
 
-    return output
+    convert_type = ConversionType.OneToOne
+    if len(output) < 1:
+        convert_type = ConversionType.UnknownError
+        output = {}
+
+    return Directive(output, line, convert_type)
 
 
 def convert(line):
@@ -104,17 +109,14 @@ def convert(line):
 
     trimmed = line.strip()
     tokens = trimmed.split(' ')
-    if len(tokens) < 4 or tokens[0] != 'd-i':
+    if tokens[0] != 'd-i':
         return Directive({}, line, ConversionType.PassThru)
 
-    convert_type = ConversionType.OneToOne
-    output = dispatch(tokens[1], ' '.join(tokens[3:]))
+    value = ''
+    if len(tokens) > 3:
+        value = ' '.join(tokens[3:])
 
-    if len(output) < 1:
-        convert_type = ConversionType.UnknownError
-        output = {}
-
-    return Directive(output, line, convert_type)
+    return dispatch(line, tokens[1], value)
 
 
 def insert_at_none(tree, value):
@@ -127,5 +129,4 @@ def insert_at_none(tree, value):
             tree[key] = [value]
         elif cur is None:
             tree[key] = value
-            break
     return tree
