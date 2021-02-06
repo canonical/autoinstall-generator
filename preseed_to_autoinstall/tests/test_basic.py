@@ -1,7 +1,6 @@
 
 from convert import (convert, Directive, ConversionType, netmask_bits,
                      insert_at_none)
-import pytest
 
 
 # FIXME actually generate files
@@ -100,17 +99,15 @@ def test_di_hostname():
             {'identity': {'hostname': value}})
 
 
-# @pytest.mark.skip('convert to dict instead of line')
 def test_di_ipaddress():
     value = '192.168.1.42'
     trivial(f'd-i netcfg/get_ipaddress string {value}',
             {'network': {'ethernets': {'any': {
                 'match': {'name': 'en*'},
                 'addresses': [value],
-            }}}}) # FIXME merge with netmask
+            }}}})  # FIXME merge with netmask
 
 
-# @pytest.mark.skip('convert to dict instead of line')
 def test_di_netmask():
     mask = '255.255.255.0'
     mask_bits = '24'
@@ -118,8 +115,7 @@ def test_di_netmask():
             {'network': {'ethernets': {'any': {
                 'match': {'name': 'en*'},
                 'addresses': [mask_bits],
-            }}}}) # FIXME merge with ipaddress
-    # FIXME merge with ipaddress
+            }}}})  # FIXME merge with ipaddress
 
 
 def test_netmask_bits():
@@ -140,7 +136,6 @@ def test_di_gateway():
                 'gateway4': value}}}})
 
 
-# @pytest.mark.skip('convert to dict instead of line')
 def test_di_nameservers():
     value = '192.168.1.1'
     trivial(f'd-i netcfg/get_nameservers string {value}',
