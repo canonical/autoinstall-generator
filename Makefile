@@ -6,7 +6,7 @@ default: check
 .PHONY: default
 
 dev-setup:
-	sudo apt install tox flake8 python3-pep517 python3-testresources
+	sudo apt install tox python3-pep517 python3-testresources
 .PHONY: dev-setup
 
 clean:
@@ -15,7 +15,7 @@ clean:
 
 distclean: clean
 	-find . -type d -name __pycache__ | xargs rm -fr
-	rm -fr .tox
+	rm -fr .tox .coverage
 .PHONY: distclean
 
 build:
@@ -26,9 +26,5 @@ test:
 	tox
 .PHONY: test
 
-lint:
-	flake8
-.PHONY: lint
-
-check: lint test
+check: test
 .PHONY: check
