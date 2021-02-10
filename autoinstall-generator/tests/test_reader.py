@@ -40,7 +40,7 @@ d-i finish-install/reboot_in_progress note'''
 
 # @pytest.mark.skip()
 def test_reader():
-    preseed_path = 'preseed_to_autoinstall/tests/data/example-preseed.txt'
+    preseed_path = 'autoinstall-generator/tests/data/example-preseed.txt'
 
     converted = []
 
