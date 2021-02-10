@@ -62,7 +62,7 @@ def test_to_file(tmpdir):
     with open(dest.strpath, 'w') as out:
         yaml.dump(identity, out, default_flow_style=False)
 
-    expected_yaml_path = 'preseed_to_autoinstall/tests/data/identity.yaml'
+    expected_yaml_path = 'autoinstall-generator/tests/data/identity.yaml'
 
     with open(expected_yaml_path, 'r') as expected_yaml_file:
         expected_yaml = expected_yaml_file.read()
