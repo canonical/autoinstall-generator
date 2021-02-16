@@ -1,5 +1,5 @@
 
-from convert import (convert, ConversionType)
+from convert import (convert, ConversionType, convert_file)
 # import pytest
 
 
@@ -38,9 +38,10 @@ d-i grub-installer/with_other_os boolean true
 d-i finish-install/reboot_in_progress note'''
 
 
-# @pytest.mark.skip()
+preseed_path = 'autoinstall-generator/tests/data/example-preseed.txt'
+
+
 def test_reader():
-    preseed_path = 'autoinstall-generator/tests/data/example-preseed.txt'
 
     converted = []
 
@@ -52,3 +53,13 @@ def test_reader():
 
     expected = expected_lines.split('\n')
     assert expected == converted
+
+
+def test_convert_file():
+    actual = convert_file(preseed_path)
+    expected = '''\
+keyboard:
+  layout: us
+locale: en_US
+'''
+    assert expected == actual
