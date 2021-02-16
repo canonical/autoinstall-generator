@@ -2,7 +2,7 @@
 from convert import (convert, Directive, ConversionType, netmask_bits,
                      insert_at_none)
 from merging import merge
-import pytest
+# import pytest
 
 
 # FIXME actually generate files
@@ -10,7 +10,7 @@ import pytest
 # FIXME dependency support - to handle ipaddress / netmask
 
 
-def trivial(start, expected):
+def trivial(start, expected, convert_type):
     trees = []
 
     if type(start) == str:
@@ -18,10 +18,18 @@ def trivial(start, expected):
 
     for item in start:
         cur = convert(item)
-        assert ConversionType.OneToOne == cur.convert_type
+        assert convert_type == cur.convert_type
         trees.append(cur.tree)
 
     assert expected == merge(trees)
+
+
+def one_to_one(start, expected):
+    trivial(start, expected, ConversionType.OneToOne)
+
+
+def dependent(start, expected):
+    trivial(start, expected, ConversionType.Dependent)
 
 
 def test_directive():
@@ -37,14 +45,14 @@ def test_directive():
 def test_di_locale():
     # FIXME needs .UTF-8 at the end in all cases?
     for locale in ['en_US', 'en_GB']:
-        trivial(f'd-i debian-installer/locale string {locale}',
-                {'locale': locale})
+        one_to_one(f'd-i debian-installer/locale string {locale}',
+                   {'locale': locale})
 
 
 def test_di_locale_extra_stuff():
     locale = 'zz_ZZ'
-    trivial(f' d-i debian-installer/locale string {locale} ',
-            {'locale': locale})
+    one_to_one(f' d-i debian-installer/locale string {locale} ',
+               {'locale': locale})
 
 
 def test_comment():
@@ -66,9 +74,8 @@ def test_di_keymap():
     # keyboard:
     #   layout: us
     for keymap in ['us', 'zz']:
-        # breakpoint()
-        trivial(f'd-i keyboard-configuration/xkb-keymap select {keymap}',
-                {'keyboard': {'layout': keymap}})
+        one_to_one(f'd-i keyboard-configuration/xkb-keymap select {keymap}',
+                   {'keyboard': {'layout': keymap}})
 
 
 def test_di_invalid():
@@ -82,49 +89,49 @@ def test_di_user_fullname():
     value = 'Debian User'
     # identity:
     #   realname: value
-    trivial(f'd-i passwd/user-fullname string {value}',
-            {'identity': {'realname': value}})
+    one_to_one(f'd-i passwd/user-fullname string {value}',
+               {'identity': {'realname': value}})
 
 
 def test_di_username():
     value = 'debian'
     # username: value
-    trivial(f'd-i passwd/username string {value}',
-            {'identity': {'username': value}})
+    one_to_one(f'd-i passwd/username string {value}',
+               {'identity': {'username': value}})
 
 
 def test_di_user_password_crypted():
     value = '$6$wdAcoXrU039hKYPd$508Qvbe7ObUnxoj15DRCkzC3qO7edjH0VV7BPNRDYK4' \
             'QR8ofJaEEF2heacn0QgD.f8pO8SNp83XNdWG6tocBM1'
     # password: value
-    trivial(f'd-i passwd/user-password-crypted string {value}',
-            {'identity': {'password': value}})
+    one_to_one(f'd-i passwd/user-password-crypted string {value}',
+               {'identity': {'password': value}})
 
 
 def test_di_hostname():
     value = 'somehost'
     # hostname: value
-    trivial(f'd-i netcfg/hostname string {value}',
-            {'identity': {'hostname': value}})
+    one_to_one(f'd-i netcfg/hostname string {value}',
+               {'identity': {'hostname': value}})
 
 
 def test_di_ipaddress():
     value = '192.168.1.42'
-    trivial(f'd-i netcfg/get_ipaddress string {value}',
-            {'network': {'ethernets': {'any': {
-                'match': {'name': 'en*'},
-                'addresses': [value],
-            }}}})  # FIXME merge with netmask
+    one_to_one(f'd-i netcfg/get_ipaddress string {value}',
+               {'network': {'ethernets': {'any': {
+                   'match': {'name': 'en*'},
+                   'addresses': [value],
+               }}}})  # FIXME merge with netmask
 
 
 def test_di_netmask():
     mask = '255.255.255.0'
     mask_bits = '24'
-    trivial(f'd-i netcfg/get_netmask string {mask}',
-            {'network': {'ethernets': {'any': {
-                'match': {'name': 'en*'},
-                'addresses': [mask_bits],
-            }}}})  # FIXME merge with ipaddress
+    one_to_one(f'd-i netcfg/get_netmask string {mask}',
+               {'network': {'ethernets': {'any': {
+                   'match': {'name': 'en*'},
+                   'addresses': [mask_bits],
+               }}}})  # FIXME merge with ipaddress
 
 
 def test_netmask_bits():
@@ -139,21 +146,21 @@ def test_netmask_bits():
 
 def test_di_gateway():
     value = '192.168.1.1'
-    trivial(f'd-i netcfg/get_gateway string {value}',
-            {'network': {'ethernets': {'any': {
+    one_to_one(f'd-i netcfg/get_gateway string {value}',
+               {'network': {'ethernets': {'any': {
                 'match': {'name': 'en*'},
                 'gateway4': value}}}})
 
 
 def test_di_nameservers():
     value = '192.168.1.1'
-    trivial(f'd-i netcfg/get_nameservers string {value}',
-            {'network': {'ethernets': {'any': {
+    one_to_one(f'd-i netcfg/get_nameservers string {value}',
+               {'network': {'ethernets': {'any': {
                 'match': {'name': 'en*'},
                 'nameservers': {'addresses': [value]}}}}})
 
 
-@pytest.mark.skip('pending dependent fragments')
+# @pytest.mark.skip('pending dependent fragments')
 def test_di_mirror():
     # d-i mirror/http/hostname string http.us.debian.org
     # d-i mirror/http/directory string /debian
@@ -164,9 +171,20 @@ def test_di_mirror():
                    'primary': [{
                        'arches': ['default'],
                        'uri': f'http://{hostname}{directory}'}]}}
-    trivial([f'd-i mirror/http/hostname string {hostname}',
-             f'd-i mirror/http/directory string {directory}'],
-            expected)
+    dependent([f'd-i mirror/http/hostname string {hostname}',
+               f'd-i mirror/http/directory string {directory}'],
+              expected)
+
+
+def test_dependent():
+    value = 'asdf'
+    for key in ['hostname', 'directory']:
+        orig = f'd-i mirror/http/{key} string {value}'
+        directive = convert(orig)
+
+        assert ConversionType.Dependent == directive.convert_type
+        assert orig == directive.orig_input
+        assert {'mirror/http': {key: value}} == directive.fragments
 
 
 def test_insert_at_none():

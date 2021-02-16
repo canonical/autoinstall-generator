@@ -1,6 +1,5 @@
 
 from convert import (convert, ConversionType, convert_file)
-# import pytest
 
 
 expected_lines = '''\

@@ -6,9 +6,15 @@ import yaml
 
 
 class ConversionType(Enum):
+    # generic error
     UnknownError = 0,
+    # input lines that get passed thru - comments and what not
     PassThru = 1,
+    # a single d-i directive that has a 1:1 mapping with an autoinstall
     OneToOne = 2,
+    # a d-i directive that, when paired with matching Dependent
+    # direcitves, can output autoinstall directive(s)
+    Dependent = 3,
 
 
 class Directive:
@@ -25,11 +31,16 @@ class Directive:
         the input that was used to generate this Directive
     convert_type : ConversionType
         the type of conversion performed
+    fragments : dict
+        partial data derived from Dependent preseed directives that,
+        when coallased with all other Dependent directives, will yield a
+        useable output
     '''
     def __init__(self, tree, orig_input, convert_type):
         self.tree = tree
         self.orig_input = orig_input
         self.convert_type = convert_type
+        self.fragments = {}
 
 
 def netmask_bits(value):
@@ -42,7 +53,7 @@ def netmask_bits(value):
     return bits
 
 
-def netmask(value):
+def netmask(value, line):
     # FIXME dependency on ip address
     bits = netmask_bits(value)
     tree = {'network': {'ethernets': {'any': {
@@ -50,7 +61,20 @@ def netmask(value):
         'addresses': [],
     }}}}
 
-    return insert_at_none(tree, bits)
+    output = insert_at_none(tree, bits)
+    return Directive(output, line, ConversionType.OneToOne)
+
+
+def mirror_http_hostname(value, line):
+    directive = Directive('', line, ConversionType.Dependent)
+    directive.fragments = {'mirror/http': {'hostname': value}}
+    return directive
+
+
+def mirror_http_directory(value, line):
+    directive = Directive('', line, ConversionType.Dependent)
+    directive.fragments = {'mirror/http': {'directory': value}}
+    return directive
 
 
 # Translation table to map from preseed values to autoinstall ones.
@@ -76,6 +100,8 @@ preseedmap = {
         'match': {'name': 'en*'},
         'addresses': [],
     }}}},
+    'mirror/http/hostname': mirror_http_hostname,
+    'mirror/http/directory': mirror_http_directory,
 }
 
 
@@ -85,7 +111,7 @@ def dispatch(line, key, value):
     if key in preseedmap:
         mapped_key = preseedmap[key]
         if callable(mapped_key):
-            output = mapped_key(value)
+            return mapped_key(value, line)
         else:
             output = insert_at_none(copy.deepcopy(mapped_key), value)
 
