@@ -2,6 +2,7 @@
 from convert import (convert, Directive, ConversionType, netmask_bits,
                      insert_at_none)
 from merging import merge
+import pytest
 
 
 # FIXME actually generate files
@@ -150,6 +151,22 @@ def test_di_nameservers():
             {'network': {'ethernets': {'any': {
                 'match': {'name': 'en*'},
                 'nameservers': {'addresses': [value]}}}}})
+
+
+@pytest.mark.skip('pending dependent fragments')
+def test_di_mirror():
+    # d-i mirror/http/hostname string http.us.debian.org
+    # d-i mirror/http/directory string /debian
+    hostname = 'http.us.debian.org'
+    directory = '/debian'
+
+    expected = {'apt': {
+                   'primary': [{
+                       'arches': ['default'],
+                       'uri': f'http://{hostname}{directory}'}]}}
+    trivial([f'd-i mirror/http/hostname string {hostname}',
+             f'd-i mirror/http/directory string {directory}'],
+            expected)
 
 
 def test_insert_at_none():
