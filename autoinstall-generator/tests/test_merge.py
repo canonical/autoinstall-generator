@@ -1,5 +1,5 @@
 
-from merging import merge
+from merging import merge, do_merge
 import pytest
 
 
@@ -10,7 +10,7 @@ def test_basic():
         'a': 1,
         'b': 2,
     }
-    actual = merge(a, b)
+    actual = do_merge(a, b)
     assert expected == actual
 
 
@@ -25,7 +25,7 @@ def test_firstlevel():
         }
     }
 
-    actual = merge(b, c)
+    actual = do_merge(b, c)
     assert expected == actual
 
 
@@ -41,7 +41,7 @@ def test_secondlevel():
         }
     }
 
-    actual = merge(c, d)
+    actual = do_merge(c, d)
     assert expected == actual
 
 
@@ -50,7 +50,7 @@ def test_invalid_int():
     one = {'a': 1}
     two = {'a': 2}
     with pytest.raises(TypeError):
-        merge(one, two)
+        do_merge(one, two)
 
 
 def test_invalid_array():
@@ -58,4 +58,18 @@ def test_invalid_array():
     one = {'a': [1]}
     two = {'a': [2]}
     with pytest.raises(TypeError):
-        merge(one, two)
+        do_merge(one, two)
+
+
+def test_list():
+    a = {'a': 1}
+    b = {'b': 2}
+    c = {'c': 3}
+    expected = {
+        'a': 1,
+        'b': 2,
+        'c': 3,
+    }
+
+    actual = merge([a, b, c])
+    assert expected == actual
