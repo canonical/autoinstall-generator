@@ -135,18 +135,15 @@ def insert_at_none(tree, value):
 
 
 def convert_file(filepath):
-    converted = []
+    trees = []
 
     with open(filepath, 'r') as preseed_file:
         for line in preseed_file.readlines():
             directive = convert(line)
             if directive.convert_type == ConversionType.OneToOne:
-                converted.append(directive)
+                trees.append(directive.tree)
 
-    result_dict = {}
-    while len(converted) > 0:
-        cur = converted.pop()
-        result_dict = merge(result_dict, cur.tree)
+    result_dict = merge(trees)
 
     result = yaml.dump(result_dict, default_flow_style=False)
 

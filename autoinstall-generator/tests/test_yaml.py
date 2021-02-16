@@ -77,11 +77,7 @@ def test_merge():
         {'identity': {'username': 'ubuntu'}},
     ]
 
-    intersection = {}
-    for directive in directives:
-        intersection = merge(intersection, directive)
-
-    assert identity == intersection
+    assert identity == merge(directives)
 
 
 def test_array():
