@@ -1,6 +1,7 @@
 
 from convert import (convert, Directive, ConversionType, netmask_bits,
                      insert_at_none)
+from merging import merge
 
 
 # FIXME actually generate files
@@ -8,11 +9,18 @@ from convert import (convert, Directive, ConversionType, netmask_bits,
 # FIXME dependency support - to handle ipaddress / netmask
 
 
-def trivial(start, finish):
-    directive = convert(start)
-    expected = finish
-    assert expected == directive.tree
-    assert ConversionType.OneToOne == directive.convert_type
+def trivial(start, expected):
+    trees = []
+
+    if type(start) == str:
+        start = [start]
+
+    for item in start:
+        cur = convert(item)
+        assert ConversionType.OneToOne == cur.convert_type
+        trees.append(cur.tree)
+
+    assert expected == merge(trees)
 
 
 def test_directive():
