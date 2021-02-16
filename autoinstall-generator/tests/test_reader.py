@@ -1,5 +1,6 @@
 
-from convert import (convert, ConversionType, convert_file)
+from convert import convert, ConversionType
+from merging import convert_file
 
 
 expected_lines = '''\

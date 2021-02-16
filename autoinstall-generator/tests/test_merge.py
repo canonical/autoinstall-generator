@@ -1,6 +1,6 @@
 
 from convert import Directive, ConversionType
-from merging import merge, do_merge
+from merging import merge, do_merge, coallesce
 import pytest
 
 
@@ -74,3 +74,21 @@ def test_list():
 
     actual = merge([a, b, c])
     assert expected == actual
+
+
+def test_coallesce():
+    hostname = Directive({}, '', ConversionType.Dependent)
+    directory = Directive({}, '', ConversionType.Dependent)
+    hostname.fragments = {'mirror/http': {'hostname': 'asdf'}}
+    directory.fragments = {'mirror/http': {'directory': '/qwerty'}}
+
+    directives = [hostname, directory]
+
+    actual = coallesce(directives)
+    # expected_tree = {'apt': {
+    #                     'primary': [{
+    #                         'arches': ['default'],
+    #                         'uri': f'http://asdf/qwerty'}]}}
+    assert ConversionType.Coallesced == actual.convert_type
+    assert directives == actual.children
+    # assert expected_tree == actual.tree

@@ -1,4 +1,8 @@
 
+from convert import convert, Directive, ConversionType
+import yaml
+
+
 def do_merge(a, b):
     '''Take a pair of dictionaries, and provide the merged result.
        Assumes that any key conflicts have values that are themselves
@@ -24,5 +28,29 @@ def merge(directives):
     result = {}
     for d in directives:
         result = do_merge(result, d.tree)
+
+    return result
+
+
+def coallesce(directives):
+    '''Take a list of co-dependent directives, and output a coallesced
+       Directive that represents resolution of all the dependent values.'''
+    result = Directive({}, '', ConversionType.Coallesced)
+    result.children = directives
+    return result
+
+
+def convert_file(filepath):
+    directives = []
+
+    with open(filepath, 'r') as preseed_file:
+        for line in preseed_file.readlines():
+            directive = convert(line)
+            if directive.convert_type == ConversionType.OneToOne:
+                directives.append(directive)
+
+    result_dict = merge(directives)
+
+    result = yaml.dump(result_dict, default_flow_style=False)
 
     return result
