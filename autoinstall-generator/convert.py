@@ -1,6 +1,8 @@
 
 import copy
 from enum import Enum
+from merging import merge
+import yaml
 
 
 class ConversionType(Enum):
@@ -130,3 +132,22 @@ def insert_at_none(tree, value):
         elif cur is None:
             tree[key] = value
     return tree
+
+
+def convert_file(filepath):
+    converted = []
+
+    with open(filepath, 'r') as preseed_file:
+        for line in preseed_file.readlines():
+            directive = convert(line)
+            if directive.convert_type == ConversionType.OneToOne:
+                converted.append(directive)
+
+    result_dict = {}
+    while len(converted) > 0:
+        cur = converted.pop()
+        result_dict = merge(result_dict, cur.tree)
+
+    result = yaml.dump(result_dict, default_flow_style=False)
+
+    return result
