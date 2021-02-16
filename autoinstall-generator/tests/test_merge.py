@@ -1,4 +1,5 @@
 
+from convert import Directive, ConversionType
 from merging import merge, do_merge
 import pytest
 
@@ -62,9 +63,9 @@ def test_invalid_array():
 
 
 def test_list():
-    a = {'a': 1}
-    b = {'b': 2}
-    c = {'c': 3}
+    a = Directive({'a': 1}, '', ConversionType.UnknownError)
+    b = Directive({'b': 2}, '', ConversionType.UnknownError)
+    c = Directive({'c': 3}, '', ConversionType.UnknownError)
     expected = {
         'a': 1,
         'b': 2,

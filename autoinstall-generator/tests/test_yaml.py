@@ -1,4 +1,5 @@
 
+from convert import Directive, ConversionType
 from merging import merge
 import yaml
 
@@ -70,12 +71,16 @@ def test_to_file(tmpdir):
 
 
 def test_merge():
-    directives = [
+    trees = [
         {'identity': {'hostname': 'ubuntu'}},
         {'identity': {'password': password}},
         {'identity': {'realname': ''}},
         {'identity': {'username': 'ubuntu'}},
     ]
+
+    directives = []
+    for tree in trees:
+        directives.append(Directive(tree, '', ConversionType.UnknownError))
 
     assert identity == merge(directives)
 
