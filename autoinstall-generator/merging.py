@@ -18,11 +18,11 @@ def do_merge(a, b):
     return result
 
 
-def merge(dicts):
-    '''Take a list of dictionaries, and do_merge() them all.'''
+def merge(directives):
+    '''Take a list of directives, and do_merge() their trees.'''
 
     result = {}
-    for d in dicts:
-        result = do_merge(result, d)
+    for d in directives:
+        result = do_merge(result, d.tree)
 
     return result

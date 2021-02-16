@@ -2,7 +2,7 @@
 from convert import (convert, Directive, ConversionType, netmask_bits,
                      insert_at_none)
 from merging import merge
-# import pytest
+import pytest
 
 
 # FIXME actually generate files
@@ -11,7 +11,7 @@ from merging import merge
 
 
 def trivial(start, expected, convert_type):
-    trees = []
+    directives = []
 
     if type(start) == str:
         start = [start]
@@ -19,9 +19,9 @@ def trivial(start, expected, convert_type):
     for item in start:
         cur = convert(item)
         assert convert_type == cur.convert_type
-        trees.append(cur.tree)
+        directives.append(cur)
 
-    assert expected == merge(trees)
+    assert expected == merge(directives)
 
 
 def one_to_one(start, expected):
@@ -160,7 +160,7 @@ def test_di_nameservers():
                 'nameservers': {'addresses': [value]}}}}})
 
 
-# @pytest.mark.skip('pending dependent fragments')
+@pytest.mark.skip('pending dependent fragments')
 def test_di_mirror():
     # d-i mirror/http/hostname string http.us.debian.org
     # d-i mirror/http/directory string /debian
