@@ -1,6 +1,6 @@
 
-from convert import Directive, ConversionType
-from merging import merge, do_merge, coallesce
+from convert import convert, Directive, ConversionType
+from merging import merge, do_merge, coallesce, bucketize, Bucket
 import pytest
 
 
@@ -77,25 +77,69 @@ def test_list():
 
 
 def test_coallesce():
-    hostname = Directive({}, '', ConversionType.Dependent)
-    directory = Directive({}, '', ConversionType.Dependent)
-    hostname.fragments = {'mirror/http': {'hostname': 'asdf'}}
-    directory.fragments = {'mirror/http': {'directory': '/qwerty'}}
+    hostname = 'asdf'
+    directory = '/qwerty'
+    lines = [
+        f'd-i mirror/http/hostname string {hostname}',
+        f'd-i mirror/http/directory string {directory}',
+    ]
 
-    directives = [hostname, directory]
+    directives = []
+    for line in lines:
+        directives.append(convert(line))
 
     actual = coallesce(directives)
-    expected_tree = {'apt': {
-                        'primary': [{
-                            'arches': ['default'],
-                            'uri': f'http://asdf/qwerty'}]}}
+    expected_tree = {
+        'apt': {
+            'primary': [{
+                'arches': ['default'],
+                'uri': f'http://{hostname}{directory}',
+            }]
+        }
+    }
     expected_fragments = {
         'mirror/http': {
-            'hostname': 'asdf',
-            'directory': '/qwerty',
+            'hostname': hostname,
+            'directory': directory,
         }
     }
     assert ConversionType.Coallesced == actual.convert_type
     assert directives == actual.children
     assert expected_fragments == actual.fragments
     assert expected_tree == actual.tree
+
+
+def test_bucketize():
+    # bucketization is the process by which directives are processed to
+    # determine if they are standalone or if they require coallescing.
+    lines = [
+        'd-i mirror/http/hostname string a',
+        'd-i mirror/http/directory string /b',
+        'd-i debian-installer/locale string en_US',
+    ]
+    key = 'mirror/http'
+
+    directives = [convert(l) for l in lines]
+    buckets = bucketize(directives)
+    assert 1 == len(buckets.independent)
+    assert ConversionType.OneToOne == buckets.independent[0].convert_type
+    assert 1 == len(buckets.dependent)
+    assert key in buckets.dependent
+    assert 2 == len(buckets.dependent[key])
+    for d in buckets.dependent[key]:
+        assert ConversionType.Dependent == d.convert_type
+
+def test_coallesce_buckets():
+    buckets = Bucket()
+    lines = [
+        'd-i mirror/http/hostname string a',
+        'd-i mirror/http/directory string /b',
+    ]
+    key = 'mirror/http'
+    directives = [convert(l) for l in lines]
+    buckets.dependent[key] = directives
+
+    coallesced = buckets.coallesce()
+
+    assert 1 == len(coallesced)
+    assert ConversionType.Dependent != coallesced[0].convert_type

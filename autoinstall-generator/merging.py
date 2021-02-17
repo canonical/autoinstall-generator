@@ -1,5 +1,6 @@
 
 from convert import convert, Directive, ConversionType
+import copy
 import yaml
 
 
@@ -56,6 +57,40 @@ def coallesce(directives):
     }
 
     return result
+
+
+class Bucket:
+    def __init__(self):
+        self.independent = []
+        self.dependent = {}
+    def coallesce(self):
+        result = copy.copy(self.independent)
+        for key in self.dependent:
+            cur = self.dependent[key]
+            result.append(coallesce(cur))
+        return result
+
+
+def bucketize(directives):
+    '''Categorize Directives into independent and dependent.  Dependent
+       type directives are grouped into a list in the dependent dict and
+       grouped on their fragment toplevel key.  Non-Dependent type
+       directives are placed into the independent list.'''
+
+    bucket = Bucket()
+
+    for cur in directives:
+        if cur.convert_type != ConversionType.Dependent:
+            bucket.independent.append(cur)
+            continue
+
+        key = list(cur.fragments)[0]
+        if key not in bucket.dependent:
+            bucket.dependent[key] = [cur]
+        else:
+            bucket.dependent[key].append(cur)
+
+    return bucket
 
 
 def convert_file(filepath):
