@@ -46,6 +46,24 @@ def test_secondlevel():
     assert expected == actual
 
 
+def test_redundant():
+    a = {'a': 1}
+    expected = {
+        'a': 1,
+    }
+    actual = do_merge(a, a)
+    assert expected == actual
+
+
+def test_redundant_array():
+    a = {'a': [1]}
+    expected = {
+        'a': [1],
+    }
+    actual = do_merge(a, a)
+    assert expected == actual
+
+
 def test_invalid_int():
     # this one worked automatically, as we tried to index into an int
     one = {'a': 1}

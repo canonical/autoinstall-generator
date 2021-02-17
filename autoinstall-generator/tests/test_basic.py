@@ -2,7 +2,7 @@
 from convert import (convert, Directive, ConversionType, netmask_bits,
                      insert_at_none)
 from merging import merge, bucketize
-import pytest
+# import pytest
 
 
 # FIXME actually generate files

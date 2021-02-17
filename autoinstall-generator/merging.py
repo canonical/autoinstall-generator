@@ -15,7 +15,8 @@ def do_merge(a, b):
             left = result[key]
             right = b[key]
             if type(left) is not dict or type(right) is not dict:
-                # breakpoint()
+                if left == right:
+                    continue
                 raise TypeError('Only dictionaries can be merged')
             result[key] = do_merge(left, right)
         else:
@@ -75,7 +76,6 @@ def coalesce(directives):
     result.fragments = {}
     for d in directives:
         result.fragments = do_merge(result.fragments, d.fragments)
-
 
     key = list(result.fragments)[0]
     coalesce_map[key](result)
