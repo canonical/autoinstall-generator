@@ -85,10 +85,17 @@ def test_coallesce():
     directives = [hostname, directory]
 
     actual = coallesce(directives)
-    # expected_tree = {'apt': {
-    #                     'primary': [{
-    #                         'arches': ['default'],
-    #                         'uri': f'http://asdf/qwerty'}]}}
+    expected_tree = {'apt': {
+                        'primary': [{
+                            'arches': ['default'],
+                            'uri': f'http://asdf/qwerty'}]}}
+    expected_fragments = {
+        'mirror/http': {
+            'hostname': 'asdf',
+            'directory': '/qwerty',
+        }
+    }
     assert ConversionType.Coallesced == actual.convert_type
     assert directives == actual.children
-    # assert expected_tree == actual.tree
+    assert expected_fragments == actual.fragments
+    assert expected_tree == actual.tree

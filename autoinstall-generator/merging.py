@@ -37,6 +37,24 @@ def coallesce(directives):
        Directive that represents resolution of all the dependent values.'''
     result = Directive({}, '', ConversionType.Coallesced)
     result.children = directives
+
+    result.fragments = {}
+    for d in directives:
+        result.fragments = do_merge(result.fragments, d.fragments)
+
+    hostname = result.fragments['mirror/http']['hostname']
+    directory = result.fragments['mirror/http']['directory']
+    result.tree = {
+        'apt': {
+            'primary': [
+                {
+                    'arches': ['default'],
+                    'uri': f'http://{hostname}{directory}'
+                }
+            ]
+        }
+    }
+
     return result
 
 
