@@ -24,9 +24,9 @@ def full_flow(start, expected, convert_type):
         directives.append(cur)
 
     buckets = bucketize(directives)
-    coallesced = buckets.coallesce()
+    coalesced = buckets.coalesce()
 
-    assert expected == merge(coallesced)
+    assert expected == merge(coalesced)
 
 
 def one_to_one(start, expected):

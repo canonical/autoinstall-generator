@@ -1,6 +1,6 @@
 
 from convert import convert, Directive, ConversionType
-from merging import merge, do_merge, coallesce, bucketize, Bucket
+from merging import merge, do_merge, coalesce, bucketize, Bucket
 import pytest
 
 
@@ -76,7 +76,7 @@ def test_list():
     assert expected == actual
 
 
-def test_coallesce():
+def test_coalesce():
     hostname = 'asdf'
     directory = '/qwerty'
     lines = [
@@ -88,7 +88,7 @@ def test_coallesce():
     for line in lines:
         directives.append(convert(line))
 
-    actual = coallesce(directives)
+    actual = coalesce(directives)
     expected_tree = {
         'apt': {
             'primary': [{
@@ -103,7 +103,7 @@ def test_coallesce():
             'directory': directory,
         }
     }
-    assert ConversionType.Coallesced == actual.convert_type
+    assert ConversionType.Coalesced == actual.convert_type
     assert directives == actual.children
     assert expected_fragments == actual.fragments
     assert expected_tree == actual.tree
@@ -111,7 +111,7 @@ def test_coallesce():
 
 def test_bucketize():
     # bucketization is the process by which directives are processed to
-    # determine if they are standalone or if they require coallescing.
+    # determine if they are standalone or if they require coalescing.
     lines = [
         'd-i mirror/http/hostname string a',
         'd-i mirror/http/directory string /b',
@@ -129,7 +129,7 @@ def test_bucketize():
     for d in buckets.dependent[key]:
         assert ConversionType.Dependent == d.convert_type
 
-def test_coallesce_buckets():
+def test_coalesce_buckets():
     buckets = Bucket()
     lines = [
         'd-i mirror/http/hostname string a',
@@ -139,7 +139,7 @@ def test_coallesce_buckets():
     directives = [convert(l) for l in lines]
     buckets.dependent[key] = directives
 
-    coallesced = buckets.coallesce()
+    coalesced = buckets.coalesce()
 
-    assert 1 == len(coallesced)
-    assert ConversionType.Dependent != coallesced[0].convert_type
+    assert 1 == len(coalesced)
+    assert ConversionType.Dependent != coalesced[0].convert_type

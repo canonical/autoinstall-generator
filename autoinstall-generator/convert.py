@@ -15,7 +15,7 @@ class ConversionType(Enum):
     Dependent = 3,
     # the result of two or more Dependent directives being grouped into
     # a single, resolved, directive
-    Coallesced = 4,
+    Coalesced = 4,
 
 
 class Directive:

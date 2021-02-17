@@ -33,10 +33,10 @@ def merge(directives):
     return result
 
 
-def coallesce(directives):
-    '''Take a list of co-dependent directives, and output a coallesced
+def coalesce(directives):
+    '''Take a list of co-dependent directives, and output a coalesced
        Directive that represents resolution of all the dependent values.'''
-    result = Directive({}, '', ConversionType.Coallesced)
+    result = Directive({}, '', ConversionType.Coalesced)
     result.children = directives
 
     result.fragments = {}
@@ -63,11 +63,11 @@ class Bucket:
     def __init__(self):
         self.independent = []
         self.dependent = {}
-    def coallesce(self):
+    def coalesce(self):
         result = copy.copy(self.independent)
         for key in self.dependent:
             cur = self.dependent[key]
-            result.append(coallesce(cur))
+            result.append(coalesce(cur))
         return result
 
 
