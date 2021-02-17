@@ -20,7 +20,7 @@ def full_flow(start, expected, convert_type):
     for item in start:
         cur = convert(item)
         assert convert_type == cur.convert_type
-        assert dict == type(cur.tree)
+        assert isinstance(cur.tree, dict)
         directives.append(cur)
 
     buckets = bucketize(directives)

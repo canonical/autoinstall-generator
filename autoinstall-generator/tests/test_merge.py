@@ -119,7 +119,7 @@ def test_bucketize():
     ]
     key = 'mirror/http'
 
-    directives = [convert(l) for l in lines]
+    directives = [convert(line) for line in lines]
     buckets = bucketize(directives)
     assert 1 == len(buckets.independent)
     assert ConversionType.OneToOne == buckets.independent[0].convert_type
@@ -129,6 +129,7 @@ def test_bucketize():
     for d in buckets.dependent[key]:
         assert ConversionType.Dependent == d.convert_type
 
+
 def test_coalesce_buckets():
     buckets = Bucket()
     lines = [
@@ -136,7 +137,7 @@ def test_coalesce_buckets():
         'd-i mirror/http/directory string /b',
     ]
     key = 'mirror/http'
-    directives = [convert(l) for l in lines]
+    directives = [convert(line) for line in lines]
     buckets.dependent[key] = directives
 
     coalesced = buckets.coalesce()
