@@ -120,11 +120,12 @@ def bucketize(directives):
 
 def convert_file(filepath):
     directives = []
+    types = [ConversionType.OneToOne, ConversionType.Dependent]
 
     with open(filepath, 'r') as preseed_file:
         for line in preseed_file.readlines():
             directive = convert(line)
-            if directive.convert_type == ConversionType.OneToOne:
+            if directive.convert_type in types:
                 directives.append(directive)
 
     buckets = bucketize(directives)

@@ -7,6 +7,11 @@ expected_lines = '''\
 d-i debian-installer/locale string en_US
 d-i keyboard-configuration/xkb-keymap select us
 d-i netcfg/choose_interface select auto
+d-i netcfg/get_ipaddress string 192.168.1.42
+d-i netcfg/get_netmask string 255.255.255.0
+d-i netcfg/get_gateway string 192.168.1.1
+d-i netcfg/get_nameservers string 192.168.1.1
+d-i netcfg/confirm_static boolean true
 d-i netcfg/get_hostname string unassigned-hostname
 d-i netcfg/get_domain string unassigned-domain
 d-i netcfg/wireless_wep string
@@ -38,12 +43,10 @@ d-i grub-installer/with_other_os boolean true
 d-i finish-install/reboot_in_progress note'''
 
 
-preseed_path = 'autoinstall-generator/tests/data/example-preseed.txt'
-# preseed_path = 'autoinstall-generator/tests/data/preseed.txt'
+preseed_path = 'autoinstall-generator/tests/data/preseed.txt'
 
 
 def test_reader():
-
     converted = []
 
     with open(preseed_path, 'r') as preseed_file:
@@ -59,8 +62,24 @@ def test_reader():
 def test_convert_file():
     actual = convert_file(preseed_path)
     expected = '''\
+apt:
+  primary:
+  - arches:
+    - default
+    uri: http://http.us.debian.org/debian
 keyboard:
   layout: us
 locale: en_US
+network:
+  ethernets:
+    any:
+      addresses:
+      - 192.168.1.42/24
+      gateway4: 192.168.1.1
+      match:
+        name: en*
+      nameservers:
+        addresses:
+        - 192.168.1.1
 '''
     assert expected == actual
