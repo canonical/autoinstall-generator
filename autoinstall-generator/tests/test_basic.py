@@ -19,6 +19,7 @@ def trivial(start, expected, convert_type):
     for item in start:
         cur = convert(item)
         assert convert_type == cur.convert_type
+        assert dict == type(cur.tree)
         directives.append(cur)
 
     assert expected == merge(directives)

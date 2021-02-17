@@ -71,13 +71,13 @@ def netmask(value, line):
 
 
 def mirror_http_hostname(value, line):
-    directive = Directive('', line, ConversionType.Dependent)
+    directive = Directive({}, line, ConversionType.Dependent)
     directive.fragments = {'mirror/http': {'hostname': value}}
     return directive
 
 
 def mirror_http_directory(value, line):
-    directive = Directive('', line, ConversionType.Dependent)
+    directive = Directive({}, line, ConversionType.Dependent)
     directive.fragments = {'mirror/http': {'directory': value}}
     return directive
 
