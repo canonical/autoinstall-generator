@@ -1,8 +1,9 @@
 
 from convert import (convert, Directive, ConversionType, netmask_bits,
                      insert_at_none)
-from merging import merge
-import pytest
+from merging import merge, bucketize
+# import pytest
+# @pytest.mark.skip('pending dependent fragments')
 
 
 # FIXME actually generate files
@@ -10,7 +11,7 @@ import pytest
 # FIXME dependency support - to handle ipaddress / netmask
 
 
-def trivial(start, expected, convert_type):
+def full_flow(start, expected, convert_type):
     directives = []
 
     if type(start) == str:
@@ -19,17 +20,21 @@ def trivial(start, expected, convert_type):
     for item in start:
         cur = convert(item)
         assert convert_type == cur.convert_type
+        assert dict == type(cur.tree)
         directives.append(cur)
 
-    assert expected == merge(directives)
+    buckets = bucketize(directives)
+    coalesced = buckets.coalesce()
+
+    assert expected == merge(coalesced)
 
 
 def one_to_one(start, expected):
-    trivial(start, expected, ConversionType.OneToOne)
+    full_flow(start, expected, ConversionType.OneToOne)
 
 
 def dependent(start, expected):
-    trivial(start, expected, ConversionType.Dependent)
+    full_flow(start, expected, ConversionType.Dependent)
 
 
 def test_directive():
@@ -160,7 +165,6 @@ def test_di_nameservers():
                 'nameservers': {'addresses': [value]}}}}})
 
 
-@pytest.mark.skip('pending dependent fragments')
 def test_di_mirror():
     # d-i mirror/http/hostname string http.us.debian.org
     # d-i mirror/http/directory string /debian

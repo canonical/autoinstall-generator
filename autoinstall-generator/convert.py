@@ -1,8 +1,6 @@
 
 import copy
 from enum import Enum
-from merging import merge
-import yaml
 
 
 class ConversionType(Enum):
@@ -13,8 +11,11 @@ class ConversionType(Enum):
     # a single d-i directive that has a 1:1 mapping with an autoinstall
     OneToOne = 2,
     # a d-i directive that, when paired with matching Dependent
-    # direcitves, can output autoinstall directive(s)
+    # directives, can output autoinstall directive(s)
     Dependent = 3,
+    # the result of two or more Dependent directives being grouped into
+    # a single, resolved, directive
+    Coalesced = 4,
 
 
 class Directive:
@@ -35,12 +36,16 @@ class Directive:
         partial data derived from Dependent preseed directives that,
         when coallased with all other Dependent directives, will yield a
         useable output
+    children : list of Directive
+        a list of child Directive objects that were the source of this
+        Directive
     '''
     def __init__(self, tree, orig_input, convert_type):
         self.tree = tree
         self.orig_input = orig_input
         self.convert_type = convert_type
         self.fragments = {}
+        self.children = []
 
 
 def netmask_bits(value):
@@ -66,13 +71,13 @@ def netmask(value, line):
 
 
 def mirror_http_hostname(value, line):
-    directive = Directive('', line, ConversionType.Dependent)
+    directive = Directive({}, line, ConversionType.Dependent)
     directive.fragments = {'mirror/http': {'hostname': value}}
     return directive
 
 
 def mirror_http_directory(value, line):
-    directive = Directive('', line, ConversionType.Dependent)
+    directive = Directive({}, line, ConversionType.Dependent)
     directive.fragments = {'mirror/http': {'directory': value}}
     return directive
 
@@ -158,19 +163,3 @@ def insert_at_none(tree, value):
         elif cur is None:
             tree[key] = value
     return tree
-
-
-def convert_file(filepath):
-    directives = []
-
-    with open(filepath, 'r') as preseed_file:
-        for line in preseed_file.readlines():
-            directive = convert(line)
-            if directive.convert_type == ConversionType.OneToOne:
-                directives.append(directive)
-
-    result_dict = merge(directives)
-
-    result = yaml.dump(result_dict, default_flow_style=False)
-
-    return result
