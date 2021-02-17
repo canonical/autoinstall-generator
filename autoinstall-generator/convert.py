@@ -59,15 +59,16 @@ def netmask_bits(value):
 
 
 def netmask(value, line):
-    # FIXME dependency on ip address
     bits = netmask_bits(value)
-    tree = {'network': {'ethernets': {'any': {
-        'match': {'name': 'en*'},
-        'addresses': [],
-    }}}}
+    directive = Directive({}, line, ConversionType.Dependent)
+    directive.fragments = {'netcfg': {'netmask_bits': bits}}
+    return directive
 
-    output = insert_at_none(tree, bits)
-    return Directive(output, line, ConversionType.OneToOne)
+
+def ipaddress(value, line):
+    directive = Directive({}, line, ConversionType.Dependent)
+    directive.fragments = {'netcfg': {'ipaddress': value}}
+    return directive
 
 
 def mirror_http_hostname(value, line):
@@ -85,14 +86,13 @@ def mirror_http_directory(value, line):
 # Translation table to map from preseed values to autoinstall ones.
 # key: d-i style directive key
 # value: dictionary for simple mapping, function for more exciting one
-preseedmap = {
+preseed_map = {
     'keyboard-configuration/xkb-keymap': {'keyboard': {'layout': None}},
     'debian-installer/locale': {'locale': None},
     'passwd/user-fullname': {'identity': {'realname': None}},
     'passwd/username': {'identity': {'username': None}},
     'passwd/user-password-crypted': {'identity': {'password': None}},
     'netcfg/hostname': {'identity': {'hostname': None}},
-    'netcfg/get_netmask': netmask,
     'netcfg/get_gateway': {'network': {'ethernets': {'any': {
         'match': {'name': 'en*'},
         'gateway4': None,
@@ -101,10 +101,8 @@ preseedmap = {
         'match': {'name': 'en*'},
         'nameservers': {'addresses': []},
     }}}},
-    'netcfg/get_ipaddress': {'network': {'ethernets': {'any': {
-        'match': {'name': 'en*'},
-        'addresses': [],
-    }}}},
+    'netcfg/get_netmask': netmask,
+    'netcfg/get_ipaddress': ipaddress,
     'mirror/http/hostname': mirror_http_hostname,
     'mirror/http/directory': mirror_http_directory,
 }
@@ -113,8 +111,8 @@ preseedmap = {
 def dispatch(line, key, value):
     output = ''
 
-    if key in preseedmap:
-        mapped_key = preseedmap[key]
+    if key in preseed_map:
+        mapped_key = preseed_map[key]
         if callable(mapped_key):
             return mapped_key(value, line)
         else:

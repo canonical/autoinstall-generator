@@ -33,6 +33,38 @@ def merge(directives):
     return result
 
 
+def mirror_http(parent_directive):
+    hostname = parent_directive.fragments['mirror/http']['hostname']
+    directory = parent_directive.fragments['mirror/http']['directory']
+    parent_directive.tree = {
+        'apt': {
+            'primary': [
+                {
+                    'arches': ['default'],
+                    'uri': f'http://{hostname}{directory}'
+                }
+            ]
+        }
+    }
+
+
+def netcfg(parent_directive):
+    netmask_bits = parent_directive.fragments['netcfg']['netmask_bits']
+    ipaddress = parent_directive.fragments['netcfg']['ipaddress']
+    parent_directive.tree = {
+        'network': {'ethernets': {'any': {
+            'match': {'name': 'en*'},
+            'addresses': [f'{ipaddress}/{netmask_bits}'],
+        }}}
+    }
+
+
+coalesce_map = {
+    'mirror/http': mirror_http,
+    'netcfg': netcfg,
+}
+
+
 def coalesce(directives):
     '''Take a list of co-dependent directives, and output a coalesced
        Directive that represents resolution of all the dependent values.'''
@@ -43,18 +75,9 @@ def coalesce(directives):
     for d in directives:
         result.fragments = do_merge(result.fragments, d.fragments)
 
-    hostname = result.fragments['mirror/http']['hostname']
-    directory = result.fragments['mirror/http']['directory']
-    result.tree = {
-        'apt': {
-            'primary': [
-                {
-                    'arches': ['default'],
-                    'uri': f'http://{hostname}{directory}'
-                }
-            ]
-        }
-    }
+
+    key = list(result.fragments)[0]
+    coalesce_map[key](result)
 
     return result
 

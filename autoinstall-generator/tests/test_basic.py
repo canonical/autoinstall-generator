@@ -2,13 +2,11 @@
 from convert import (convert, Directive, ConversionType, netmask_bits,
                      insert_at_none)
 from merging import merge, bucketize
-# import pytest
-# @pytest.mark.skip('pending dependent fragments')
+import pytest
 
 
 # FIXME actually generate files
 # FIXME leader version
-# FIXME dependency support - to handle ipaddress / netmask
 
 
 def full_flow(start, expected, convert_type):
@@ -120,25 +118,6 @@ def test_di_hostname():
                {'identity': {'hostname': value}})
 
 
-def test_di_ipaddress():
-    value = '192.168.1.42'
-    one_to_one(f'd-i netcfg/get_ipaddress string {value}',
-               {'network': {'ethernets': {'any': {
-                   'match': {'name': 'en*'},
-                   'addresses': [value],
-               }}}})  # FIXME merge with netmask
-
-
-def test_di_netmask():
-    mask = '255.255.255.0'
-    mask_bits = '24'
-    one_to_one(f'd-i netcfg/get_netmask string {mask}',
-               {'network': {'ethernets': {'any': {
-                   'match': {'name': 'en*'},
-                   'addresses': [mask_bits],
-               }}}})  # FIXME merge with ipaddress
-
-
 def test_netmask_bits():
     table = {
             '255.255.255.0': '24',
@@ -157,12 +136,18 @@ def test_di_gateway():
                 'gateway4': value}}}})
 
 
-def test_di_nameservers():
-    value = '192.168.1.1'
-    one_to_one(f'd-i netcfg/get_nameservers string {value}',
-               {'network': {'ethernets': {'any': {
-                'match': {'name': 'en*'},
-                'nameservers': {'addresses': [value]}}}}})
+# @pytest.mark.skip('pending dependent fragments')
+def test_di_address_netmask():
+    address = '192.168.1.42'
+    mask = '255.255.255.0'
+    mask_bits = '24'
+    expected = {'network': {'ethernets': {'any': {
+        'match': {'name': 'en*'},
+        'addresses': [f'{address}/{mask_bits}'],
+    }}}}
+    dependent([f'd-i netcfg/get_ipaddress string {address}',
+               f'd-i netcfg/get_netmask string {mask}'],
+              expected)
 
 
 def test_di_mirror():
