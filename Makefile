@@ -23,7 +23,7 @@ build:
 .PHONY: build
 
 test:
-	tox -e py
+	tox
 .PHONY: test
 
 check: test
