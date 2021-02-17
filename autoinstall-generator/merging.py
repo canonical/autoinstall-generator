@@ -63,6 +63,7 @@ class Bucket:
     def __init__(self):
         self.independent = []
         self.dependent = {}
+
     def coalesce(self):
         result = copy.copy(self.independent)
         for key in self.dependent:
