@@ -15,6 +15,7 @@ def do_merge(a, b):
             left = result[key]
             right = b[key]
             if type(left) is not dict or type(right) is not dict:
+                # breakpoint()
                 raise TypeError('Only dictionaries can be merged')
             result[key] = do_merge(left, right)
         else:
@@ -126,7 +127,9 @@ def convert_file(filepath):
             if directive.convert_type == ConversionType.OneToOne:
                 directives.append(directive)
 
-    result_dict = merge(directives)
+    buckets = bucketize(directives)
+    coalesced = buckets.coalesce()
+    result_dict = merge(coalesced)
 
     result = yaml.dump(result_dict, default_flow_style=False)
 

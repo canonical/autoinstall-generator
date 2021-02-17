@@ -39,6 +39,7 @@ d-i finish-install/reboot_in_progress note'''
 
 
 preseed_path = 'autoinstall-generator/tests/data/example-preseed.txt'
+# preseed_path = 'autoinstall-generator/tests/data/preseed.txt'
 
 
 def test_reader():
