@@ -15,6 +15,8 @@ def do_merge(a, b):
             left = result[key]
             right = b[key]
             if type(left) is not dict or type(right) is not dict:
+                if left == right:
+                    continue
                 raise TypeError('Only dictionaries can be merged')
             result[key] = do_merge(left, right)
         else:
@@ -33,6 +35,38 @@ def merge(directives):
     return result
 
 
+def mirror_http(parent_directive):
+    hostname = parent_directive.fragments['mirror/http']['hostname']
+    directory = parent_directive.fragments['mirror/http']['directory']
+    parent_directive.tree = {
+        'apt': {
+            'primary': [
+                {
+                    'arches': ['default'],
+                    'uri': f'http://{hostname}{directory}'
+                }
+            ]
+        }
+    }
+
+
+def netcfg(parent_directive):
+    netmask_bits = parent_directive.fragments['netcfg']['netmask_bits']
+    ipaddress = parent_directive.fragments['netcfg']['ipaddress']
+    parent_directive.tree = {
+        'network': {'ethernets': {'any': {
+            'match': {'name': 'en*'},
+            'addresses': [f'{ipaddress}/{netmask_bits}'],
+        }}}
+    }
+
+
+coalesce_map = {
+    'mirror/http': mirror_http,
+    'netcfg': netcfg,
+}
+
+
 def coalesce(directives):
     '''Take a list of co-dependent directives, and output a coalesced
        Directive that represents resolution of all the dependent values.'''
@@ -43,18 +77,8 @@ def coalesce(directives):
     for d in directives:
         result.fragments = do_merge(result.fragments, d.fragments)
 
-    hostname = result.fragments['mirror/http']['hostname']
-    directory = result.fragments['mirror/http']['directory']
-    result.tree = {
-        'apt': {
-            'primary': [
-                {
-                    'arches': ['default'],
-                    'uri': f'http://{hostname}{directory}'
-                }
-            ]
-        }
-    }
+    key = list(result.fragments)[0]
+    coalesce_map[key](result)
 
     return result
 
@@ -96,14 +120,17 @@ def bucketize(directives):
 
 def convert_file(filepath):
     directives = []
+    types = [ConversionType.OneToOne, ConversionType.Dependent]
 
     with open(filepath, 'r') as preseed_file:
         for line in preseed_file.readlines():
             directive = convert(line)
-            if directive.convert_type == ConversionType.OneToOne:
+            if directive.convert_type in types:
                 directives.append(directive)
 
-    result_dict = merge(directives)
+    buckets = bucketize(directives)
+    coalesced = buckets.coalesce()
+    result_dict = merge(coalesced)
 
     result = yaml.dump(result_dict, default_flow_style=False)
 
