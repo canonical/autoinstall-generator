@@ -1,6 +1,7 @@
 
-from convert import convert, Directive, ConversionType
-from merging import merge, do_merge, coalesce, bucketize, Bucket
+from autoinstall_generator.convert import convert, Directive, ConversionType
+from autoinstall_generator.merging import (merge, do_merge, coalesce,
+                                           bucketize, Bucket)
 import pytest
 
 

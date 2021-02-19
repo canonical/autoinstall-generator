@@ -1,7 +1,7 @@
 
-from convert import (convert, Directive, ConversionType, netmask_bits,
-                     insert_at_none)
-from merging import merge, bucketize
+from autoinstall_generator.convert import (convert, Directive, ConversionType,
+                                           netmask_bits, insert_at_none)
+from autoinstall_generator.merging import merge, bucketize
 # import pytest
 
 
