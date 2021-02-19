@@ -1,9 +1,12 @@
 
-all: default
+default: all
+.PHONY: default
+
+all: check build
 .PHONY: all
 
-default: check
-.PHONY: default
+new: clean all
+.PHONY: new
 
 dev-setup:
 	sudo apt install tox python3-pep517 python3-testresources
@@ -22,9 +25,6 @@ build:
 	python3 -m pep517.build .
 .PHONY: build
 
-test:
+check test:
 	tox
-.PHONY: test
-
-check: test
-.PHONY: check
+.PHONY: check test
