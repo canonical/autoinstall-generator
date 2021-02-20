@@ -8,9 +8,10 @@ all: check build
 new: clean all
 .PHONY: new
 
-dev-setup:
-	sudo apt install tox python3-pep517 python3-testresources
-.PHONY: dev-setup
+install_deps:
+	sudo apt install tox python3-pep517 python3-testresources \
+		python3-setuptools
+.PHONY: install_deps
 
 clean:
 	rm -fr *.egg-info build dist
