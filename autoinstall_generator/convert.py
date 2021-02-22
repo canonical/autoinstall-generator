@@ -5,17 +5,17 @@ from enum import Enum
 
 class ConversionType(Enum):
     # generic error
-    UnknownError = 0,
+    UnknownError = 0
     # input lines that get passed thru - comments and what not
-    PassThru = 1,
+    PassThru = 1
     # a single d-i directive that has a 1:1 mapping with an autoinstall
-    OneToOne = 2,
+    OneToOne = 2
     # a d-i directive that, when paired with matching Dependent
     # directives, can output autoinstall directive(s)
-    Dependent = 3,
+    Dependent = 3
     # the result of two or more Dependent directives being grouped into
     # a single, resolved, directive
-    Coalesced = 4,
+    Coalesced = 4
 
 
 class Directive:

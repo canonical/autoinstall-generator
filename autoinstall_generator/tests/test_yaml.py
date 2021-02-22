@@ -1,6 +1,6 @@
 
-from convert import Directive, ConversionType
-from merging import merge
+from autoinstall_generator.convert import Directive, ConversionType
+from autoinstall_generator.merging import merge
 import yaml
 
 
@@ -63,7 +63,7 @@ def test_to_file(tmpdir):
     with open(dest.strpath, 'w') as out:
         yaml.dump(identity, out, default_flow_style=False)
 
-    expected_yaml_path = 'autoinstall-generator/tests/data/identity.yaml'
+    expected_yaml_path = 'autoinstall_generator/tests/data/identity.yaml'
 
     with open(expected_yaml_path, 'r') as expected_yaml_file:
         expected_yaml = expected_yaml_file.read()

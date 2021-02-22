@@ -1,6 +1,6 @@
 
-from convert import convert, ConversionType
-from merging import convert_file
+from autoinstall_generator.convert import convert, ConversionType
+from autoinstall_generator.merging import convert_file
 
 
 expected_lines = '''\
@@ -43,7 +43,7 @@ d-i grub-installer/with_other_os boolean true
 d-i finish-install/reboot_in_progress note'''
 
 
-preseed_path = 'autoinstall-generator/tests/data/preseed.txt'
+preseed_path = 'autoinstall_generator/tests/data/preseed.txt'
 
 
 def test_reader():

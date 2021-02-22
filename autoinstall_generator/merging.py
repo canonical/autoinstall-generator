@@ -1,5 +1,5 @@
 
-from convert import convert, Directive, ConversionType
+from autoinstall_generator.convert import convert, Directive, ConversionType
 import copy
 import yaml
 

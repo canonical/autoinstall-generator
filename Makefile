@@ -1,30 +1,30 @@
 
-all: default
-.PHONY: all
+default: all
 
-default: check
-.PHONY: default
+all: check build
 
-dev-setup:
-	sudo apt install tox python3-pep517 python3-testresources
-.PHONY: dev-setup
+new: clean all
+
+install_deps:
+	sudo apt install tox python3-pep517 python3-testresources \
+		python3-setuptools
 
 clean:
 	rm -fr *.egg-info build dist
-.PHONY: clean
 
 distclean: clean
 	-find . -type d -name __pycache__ | xargs rm -fr
 	rm -fr .tox .coverage
-.PHONY: distclean
 
 build:
 	python3 -m pep517.build .
-.PHONY: build
+
+lint:
+	tox -e lint
 
 test:
-	tox
-.PHONY: test
+	tox -e test
 
-check: test
-.PHONY: check
+check: lint test
+
+.PHONY: default all new install_deps clean distclean build lint test check
