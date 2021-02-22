@@ -14,18 +14,22 @@ parser.add_argument('outfile', nargs='?', type=argparse.FileType('w'),
                     default=sys.stdout)
 args = parser.parse_args()
 
-if args.inpath == "-":
-    infile_needs_close = False
-    infile = sys.stdin
-else:
-    infile_needs_close = True
-    infile = open(args.inpath, 'r')
+infile = None
 
 try:
+    if args.inpath == "-":
+        infile_needs_close = False
+        infile = sys.stdin
+    else:
+        infile_needs_close = True
+        infile = open(args.inpath, 'r')
+
     out = convert_file(infile)
     args.outfile.write(out)
 except:
-    if infile_needs_close: infile.close()
     raise
+finally:
+    if infile_needs_close and infile:
+        infile.close()
 
 sys.exit(0)

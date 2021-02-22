@@ -49,3 +49,8 @@ def test_pipe():
 def test_help():
     process = run([cmd, '--help'])
     assert 0 == process.returncode
+
+
+def test_bad_infile():
+    process = run([cmd, '/does/not/exist'])
+    assert 0 != process.returncode
