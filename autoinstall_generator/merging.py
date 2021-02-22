@@ -134,8 +134,3 @@ def convert_file(preseed_file):
     result = yaml.dump(result_dict, default_flow_style=False)
 
     return result
-
-
-def convert_filepath(filepath):
-    with open(filepath, 'r') as preseed_file:
-        return convert_file(preseed_file)
