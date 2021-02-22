@@ -43,7 +43,9 @@ d-i grub-installer/with_other_os boolean true
 d-i finish-install/reboot_in_progress note'''
 
 
-preseed_path = 'autoinstall_generator/tests/data/preseed.txt'
+data = 'autoinstall_generator/tests/data'
+preseed_path = f'{data}/preseed.txt'
+autoinstall_path = f'{data}/preseed2autoinstall.yaml'
 
 
 def test_reader():
@@ -61,25 +63,6 @@ def test_reader():
 
 def test_convert_file():
     actual = convert_file(preseed_path)
-    expected = '''\
-apt:
-  primary:
-  - arches:
-    - default
-    uri: http://http.us.debian.org/debian
-keyboard:
-  layout: us
-locale: en_US
-network:
-  ethernets:
-    any:
-      addresses:
-      - 192.168.1.42/24
-      gateway4: 192.168.1.1
-      match:
-        name: en*
-      nameservers:
-        addresses:
-        - 192.168.1.1
-'''
+    with open(autoinstall_path, 'r') as f:
+        expected = f.read()
     assert expected == actual

@@ -1,0 +1,15 @@
+#!/usr/bin/env python3
+
+from autoinstall_generator.merging import convert_file
+import sys
+
+# input file - d-i preseed
+inpath = sys.argv[1]
+# output file - subiquity autoinstall
+outpath = sys.argv[2]
+
+out = convert_file(inpath)
+with open(outpath, 'w') as f:
+    f.write(out)
+
+sys.exit(0)
