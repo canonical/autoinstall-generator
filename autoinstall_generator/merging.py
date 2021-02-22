@@ -118,15 +118,14 @@ def bucketize(directives):
     return bucket
 
 
-def convert_file(filepath):
+def convert_file(preseed_file):
     directives = []
     types = [ConversionType.OneToOne, ConversionType.Dependent]
 
-    with open(filepath, 'r') as preseed_file:
-        for line in preseed_file.readlines():
-            directive = convert(line)
-            if directive.convert_type in types:
-                directives.append(directive)
+    for line in preseed_file.readlines():
+        directive = convert(line)
+        if directive.convert_type in types:
+            directives.append(directive)
 
     buckets = bucketize(directives)
     coalesced = buckets.coalesce()
@@ -135,3 +134,8 @@ def convert_file(filepath):
     result = yaml.dump(result_dict, default_flow_style=False)
 
     return result
+
+
+def convert_filepath(filepath):
+    with open(filepath, 'r') as preseed_file:
+        return convert_file(preseed_file)

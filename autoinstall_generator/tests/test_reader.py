@@ -62,7 +62,8 @@ def test_reader():
 
 
 def test_convert_file():
-    actual = convert_file(preseed_path)
-    with open(autoinstall_path, 'r') as f:
-        expected = f.read()
+    with open(preseed_path, 'r') as preseed:
+        actual = convert_file(preseed)
+    with open(autoinstall_path, 'r') as autoinstall:
+        expected = autoinstall.read()
     assert expected == actual

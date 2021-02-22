@@ -12,10 +12,20 @@ parser.add_argument("inpath")#, required=False)
 # output - subiquity autoinstall
 parser.add_argument('outfile', nargs='?', type=argparse.FileType('w'),
                     default=sys.stdout)
-
 args = parser.parse_args()
 
-out = convert_file(args.inpath)
-args.outfile.write(out)
+if args.inpath == "-":
+    infile_needs_close = False
+    infile = sys.stdin
+else:
+    infile_needs_close = True
+    infile = open(args.inpath, 'r')
+
+try:
+    out = convert_file(infile)
+    args.outfile.write(out)
+except:
+    if infile_needs_close: infile.close()
+    raise
 
 sys.exit(0)

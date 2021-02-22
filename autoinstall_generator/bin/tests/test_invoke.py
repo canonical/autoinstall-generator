@@ -14,13 +14,19 @@ preseed_path = f'{data}/preseed.txt'
 autoinstall_path = f'{data}/preseed2autoinstall.yaml'
 
 
+def run(args, **kwargs):
+    return subprocess.run(args, capture_output=True, text=True, **kwargs)
+
+
 def file_contents(path):
     with open(path, 'r') as f:
         return f.read()
 
 
 def test_invoke():
-    assert 512 == os.system(cmd)
+    ec = os.system(cmd)
+    assert os.WIFEXITED(ec)
+    assert 2 == os.WEXITSTATUS(ec)
 
 
 def test_convert():
@@ -32,8 +38,14 @@ def test_convert():
 
 
 def test_stdout():
-    process = subprocess.run([cmd, preseed_path], capture_output=True,
-                             text=True)
+    process = run([cmd, preseed_path])
+    assert 0 == process.returncode
+    expected = file_contents(autoinstall_path)
+    assert expected == str(process.stdout)
+
+
+def test_pipe():
+    process = run([cmd, '-'], input=file_contents(preseed_path))
     assert 0 == process.returncode
     expected = file_contents(autoinstall_path)
     assert expected == str(process.stdout)
