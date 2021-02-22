@@ -1,6 +1,7 @@
 
 
 import os
+import subprocess
 import tempfile
 
 # import pytest
@@ -19,7 +20,7 @@ def file_contents(path):
 
 
 def test_invoke():
-    assert 256 == os.system(cmd)
+    assert 512 == os.system(cmd)
 
 
 def test_convert():
@@ -28,3 +29,15 @@ def test_convert():
     expected = file_contents(autoinstall_path)
     actual = file_contents(out.name)
     assert expected == actual
+
+
+def test_stdout():
+    process = subprocess.run([cmd, preseed_path], capture_output=True,
+                             text=True)
+    assert 0 == process.returncode
+    expected = file_contents(autoinstall_path)
+    assert expected == str(process.stdout)
+
+
+def test_help():
+    assert 0 == os.system(f'{cmd} --help')

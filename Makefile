@@ -25,6 +25,12 @@ lint:
 test:
 	tox -e test
 
-check: lint test
+check:
+	tox
+
+invoke:
+	@PYTHONPATH=$(shell realpath .) \
+		autoinstall_generator/bin/autoinstall_generator \
+		autoinstall_generator/tests/data/preseed.txt
 
 .PHONY: default all new install_deps clean distclean build lint test check
