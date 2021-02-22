@@ -1,11 +1,6 @@
 
-
-import os
 import subprocess
 import tempfile
-
-# import pytest
-# @pytest.mark.skip('not yet')
 
 cmd = './autoinstall_generator/bin/autoinstall_generator'
 # FIXME redundant file paths with reader
@@ -24,14 +19,14 @@ def file_contents(path):
 
 
 def test_invoke():
-    ec = os.system(cmd)
-    assert os.WIFEXITED(ec)
-    assert 2 == os.WEXITSTATUS(ec)
+    process = run([cmd])
+    assert 2 == process.returncode
 
 
 def test_convert():
     out = tempfile.NamedTemporaryFile()
-    assert 0 == os.system(f'{cmd} {preseed_path} {out.name}')
+    process = run([cmd, preseed_path, out.name])
+    assert 0 == process.returncode
     expected = file_contents(autoinstall_path)
     actual = file_contents(out.name)
     assert expected == actual
@@ -52,4 +47,5 @@ def test_pipe():
 
 
 def test_help():
-    assert 0 == os.system(f'{cmd} --help')
+    process = run([cmd, '--help'])
+    assert 0 == process.returncode

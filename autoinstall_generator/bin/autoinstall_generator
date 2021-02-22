@@ -8,7 +8,7 @@ import sys
 
 parser = argparse.ArgumentParser()
 # input - d-i preseed
-parser.add_argument("inpath")#, required=False)
+parser.add_argument("inpath")
 # output - subiquity autoinstall
 parser.add_argument('outfile', nargs='?', type=argparse.FileType('w'),
                     default=sys.stdout)
