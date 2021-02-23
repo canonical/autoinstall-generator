@@ -117,10 +117,15 @@ def bucketize(directives):
     return bucket
 
 
+def implied_directives():
+    return [Directive({'version': 1}, '', ConversionType.Implied)]
+
+
 def convert_file(preseed_file):
-    directives = []
+    directives = implied_directives()
     types = [ConversionType.OneToOne, ConversionType.Dependent]
 
+    # directives = [convert(line) for line in preseed_file.readlines()]
     for line in preseed_file.readlines():
         directive = convert(line)
         if directive.convert_type in types:

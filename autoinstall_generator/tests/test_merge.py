@@ -78,6 +78,13 @@ def test_duplicate_array():
     assert expected == do_merge(one, two)
 
 
+def test_empty():
+    one = {'a': [1]}
+    two = {}
+    expected = {'a': [1]}
+    assert expected == do_merge(one, two)
+
+
 def test_list():
     a = Directive({'a': 1}, '', ConversionType.UnknownError)
     b = Directive({'b': 2}, '', ConversionType.UnknownError)
