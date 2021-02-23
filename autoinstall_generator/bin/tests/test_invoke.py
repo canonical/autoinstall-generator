@@ -8,6 +8,8 @@ data = 'autoinstall_generator/tests/data'
 preseed_path = f'{data}/preseed.txt'
 autoinstall_path = f'{data}/preseed2autoinstall.yaml'
 
+simple_path = f'{data}/simple.txt'
+
 
 def run(args, **kwargs):
     return subprocess.run(args, capture_output=True, text=True, **kwargs)
@@ -48,9 +50,30 @@ def test_pipe():
 
 def test_help():
     process = run([cmd, '--help'])
+    actual = process.stdout.split('\n')[0]
+    expected = 'usage: autoinstall_generator'
+    assert actual.startswith(expected)
     assert 0 == process.returncode
 
 
 def test_bad_infile():
     process = run([cmd, '/does/not/exist'])
+    found_exception = False
+    for line in process.stderr.split('\n'):
+        if line.startswith('FileNotFound'):
+            found_exception = True
+            break
+
+    assert found_exception
     assert 0 != process.returncode
+
+
+def test_simple():
+    process = run([cmd, simple_path, '--debug'])
+    assert 0 == process.returncode
+    expected = '''\
+locale: en_US
+version: 1
+# d-i debian-installer/locale string en_US
+'''
+    assert expected == str(process.stdout)

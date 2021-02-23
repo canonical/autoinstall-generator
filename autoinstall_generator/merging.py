@@ -121,7 +121,7 @@ def implied_directives():
     return [Directive({'version': 1}, '', ConversionType.Implied)]
 
 
-def convert_file(preseed_file):
+def convert_file(preseed_file, debug=False):
     directives = implied_directives()
     types = [ConversionType.OneToOne, ConversionType.Dependent]
 
@@ -136,5 +136,12 @@ def convert_file(preseed_file):
     result_dict = merge(coalesced)
 
     result = yaml.dump(result_dict, default_flow_style=False)
+
+    if debug:
+        trailer = []
+        for directive in directives:
+            if directive.orig_input:
+                trailer.append('# ' + directive.orig_input)
+        result += '\n'.join(trailer)
 
     return result
