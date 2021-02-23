@@ -2,13 +2,12 @@
 from autoinstall_generator.convert import convert, ConversionType
 from autoinstall_generator.merging import convert_file
 
-# d-i debian-installer/locale string en_GB.UTF-8
-
 
 expected_lines = '''\
 d-i debian-installer/locale string en_US
 d-i debian-installer/language string en
 d-i debian-installer/country string NL
+d-i debian-installer/locale string en_GB.UTF-8
 d-i localechooser/supported-locales multiselect en_US.UTF-8, nl_NL.UTF-8
 d-i keyboard-configuration/xkb-keymap select us
 d-i netcfg/choose_interface select auto

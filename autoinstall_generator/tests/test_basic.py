@@ -207,3 +207,13 @@ def test_insert_at_array():
 def test_unsupported():
     line = 'd-i localechooser/supported-locales multiselect en_US.UTF-8'
     unsupported(line, {})
+
+
+def test_duplicate():
+    directives = []
+    for locale in ['en_US', 'en_GB']:
+        line = f'd-i debian-installer/locale string {locale}'
+        directives.append(convert(line))
+    actual = merge(directives)
+    expected = {'locale': 'en_GB'}
+    assert expected == actual
