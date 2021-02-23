@@ -20,6 +20,8 @@ class ConversionType(Enum):
     # installer, but does not yet have a supported autoinstaller
     # mapping.
     Unsupported = 5
+    # an autoinstall directive that has no match in d-i, and is required
+    Implied = 6
 
 
 class Directive:

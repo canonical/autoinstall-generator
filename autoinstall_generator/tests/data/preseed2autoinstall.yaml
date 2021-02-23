@@ -17,3 +17,4 @@ network:
       nameservers:
         addresses:
         - 192.168.1.1
+version: 1
