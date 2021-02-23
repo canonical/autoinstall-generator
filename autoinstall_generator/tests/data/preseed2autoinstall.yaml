@@ -5,7 +5,7 @@ apt:
     uri: http://http.us.debian.org/debian
 keyboard:
   layout: us
-locale: en_US
+locale: en_GB.UTF-8
 network:
   ethernets:
     any:

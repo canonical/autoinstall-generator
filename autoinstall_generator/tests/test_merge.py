@@ -2,7 +2,6 @@
 from autoinstall_generator.convert import convert, Directive, ConversionType
 from autoinstall_generator.merging import (merge, do_merge, coalesce,
                                            bucketize, Bucket)
-import pytest
 
 
 def test_basic():
@@ -65,20 +64,18 @@ def test_redundant_array():
     assert expected == actual
 
 
-def test_invalid_int():
-    # this one worked automatically, as we tried to index into an int
+def test_duplicate_int():
     one = {'a': 1}
     two = {'a': 2}
-    with pytest.raises(TypeError):
-        do_merge(one, two)
+    expected = {'a': 2}
+    assert expected == do_merge(one, two)
 
 
-def test_invalid_array():
-    # this one was designed to fail where the int indexing didn't
+def test_duplicate_array():
     one = {'a': [1]}
     two = {'a': [2]}
-    with pytest.raises(TypeError):
-        do_merge(one, two)
+    expected = {'a': [2]}
+    assert expected == do_merge(one, two)
 
 
 def test_list():

@@ -16,6 +16,10 @@ class ConversionType(Enum):
     # the result of two or more Dependent directives being grouped into
     # a single, resolved, directive
     Coalesced = 4
+    # a d-i directive that is recognized as being relevant to the
+    # installer, but does not yet have a supported autoinstaller
+    # mapping.
+    Unsupported = 5
 
 
 class Directive:
@@ -85,7 +89,8 @@ def mirror_http_directory(value, line):
 
 # Translation table to map from preseed values to autoinstall ones.
 # key: d-i style directive key
-# value: dictionary for simple mapping, function for more exciting one
+# value: dictionary for simple mapping, function for more exciting one,
+#        None if unsupported
 preseed_map = {
     'keyboard-configuration/xkb-keymap': {'keyboard': {'layout': None}},
     'debian-installer/locale': {'locale': None},
@@ -105,15 +110,21 @@ preseed_map = {
     'netcfg/get_ipaddress': ipaddress,
     'mirror/http/hostname': mirror_http_hostname,
     'mirror/http/directory': mirror_http_directory,
+    'localechooser/supported-locales': None,
+    'debian-installer/language': None,
+    'debian-installer/country': None,
+    'keyboard-configuration/toggle': None,
 }
 
 
 def dispatch(line, key, value):
-    output = ''
+    output = {}
 
     if key in preseed_map:
         mapped_key = preseed_map[key]
-        if callable(mapped_key):
+        if not mapped_key:
+            return Directive({}, line, ConversionType.Unsupported)
+        elif callable(mapped_key):
             return mapped_key(value, line)
         else:
             output = insert_at_none(copy.deepcopy(mapped_key), value)

@@ -35,6 +35,10 @@ def dependent(start, expected):
     full_flow(start, expected, ConversionType.Dependent)
 
 
+def unsupported(start, expected):
+    full_flow(start, expected, ConversionType.Unsupported)
+
+
 def test_directive():
     orig = 'my input'
     output = 'my output'
@@ -197,4 +201,25 @@ def test_insert_at_array():
 
     actual = insert_at_none(a, 1)
     expected = {'a': [1]}
+    assert expected == actual
+
+
+def test_unsupported():
+    lines = [
+        'd-i localechooser/supported-locales multiselect en_US.UTF-8',
+        'd-i debian-installer/language string en',
+        'd-i debian-installer/country string NL',
+        'd-i keyboard-configuration/toggle select No toggling',
+    ]
+    for line in lines:
+        unsupported(line, {})
+
+
+def test_duplicate():
+    directives = []
+    for locale in ['en_US', 'en_GB']:
+        line = f'd-i debian-installer/locale string {locale}'
+        directives.append(convert(line))
+    actual = merge(directives)
+    expected = {'locale': 'en_GB'}
     assert expected == actual
