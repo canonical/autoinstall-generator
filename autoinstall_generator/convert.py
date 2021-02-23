@@ -111,6 +111,8 @@ preseed_map = {
     'mirror/http/hostname': mirror_http_hostname,
     'mirror/http/directory': mirror_http_directory,
     'localechooser/supported-locales': None,
+    'debian-installer/language': None,
+    'debian-installer/country': None,
 }
 
 
