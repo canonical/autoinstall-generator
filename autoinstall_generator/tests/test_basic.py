@@ -2,11 +2,8 @@
 from autoinstall_generator.convert import (convert, Directive, ConversionType,
                                            netmask_bits, insert_at_none)
 from autoinstall_generator.merging import merge, bucketize
-# import pytest
 
-
-# FIXME actually generate files
-# FIXME leader version
+# FIXME coalesce process modifies the original dictionary fragment
 
 
 def full_flow(start, expected, convert_type):
@@ -140,7 +137,6 @@ def test_di_gateway():
                 'gateway4': value}}}})
 
 
-# @pytest.mark.skip('pending dependent fragments')
 def test_di_address_netmask():
     address = '192.168.1.42'
     mask = '255.255.255.0'

@@ -20,6 +20,11 @@ def file_contents(path):
         return f.read()
 
 
+def file_lines(path):
+    with open(path, 'r') as f:
+        return [line.strip('\n') for line in f.readlines()]
+
+
 def test_invoke():
     process = run([cmd])
     assert 2 == process.returncode
@@ -30,6 +35,17 @@ def test_convert():
     process = run([cmd, preseed_path, out.name])
     assert 0 == process.returncode
     expected = file_contents(autoinstall_path)
+    actual = file_contents(out.name)
+    assert expected == actual
+
+
+def test_convert_debug():
+    out = tempfile.NamedTemporaryFile()
+    process = run([cmd, preseed_path, out.name, '--debug'])
+    assert 0 == process.returncode
+    preseed_lines = file_lines(preseed_path)
+    commented_input = ''.join([f'# {line}\n' for line in preseed_lines])
+    expected = file_contents(autoinstall_path) + commented_input
     actual = file_contents(out.name)
     assert expected == actual
 
@@ -68,7 +84,7 @@ def test_bad_infile():
     assert 0 != process.returncode
 
 
-def test_simple():
+def test_simple_debug():
     process = run([cmd, simple_path, '--debug'])
     assert 0 == process.returncode
     expected = '''\

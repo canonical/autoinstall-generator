@@ -118,19 +118,14 @@ def bucketize(directives):
 
 
 def implied_directives():
-    return [Directive({'version': 1}, '', ConversionType.Implied)]
+    return [Directive({'version': 1}, None, ConversionType.Implied)]
 
 
 def convert_file(preseed_file, debug=False):
     directives = implied_directives()
-    types = [ConversionType.OneToOne, ConversionType.Dependent]
 
-    # directives = [convert(line) for line in preseed_file.readlines()]
-    for line in preseed_file.readlines():
-        directive = convert(line)
-        if directive.convert_type in types:
-            directives.append(directive)
-
+    lines = preseed_file.readlines()
+    directives += [convert(line.strip('\n')) for line in lines]
     buckets = bucketize(directives)
     coalesced = buckets.coalesce()
     result_dict = merge(coalesced)
@@ -140,8 +135,10 @@ def convert_file(preseed_file, debug=False):
     if debug:
         trailer = []
         for directive in directives:
-            if directive.orig_input:
-                trailer.append('# ' + directive.orig_input)
-        result += '\n'.join(trailer)
+            # deliberately written to check against None so that blank
+            # lines are output as a comment
+            if directive.orig_input is not None:
+                trailer.append(f'# {directive.orig_input}\n')
+        result += ''.join(trailer)
 
     return result
