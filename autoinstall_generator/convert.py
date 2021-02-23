@@ -113,6 +113,7 @@ preseed_map = {
     'localechooser/supported-locales': None,
     'debian-installer/language': None,
     'debian-installer/country': None,
+    'keyboard-configuration/toggle': None,
 }
 
 

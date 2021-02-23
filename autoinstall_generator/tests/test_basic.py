@@ -205,8 +205,14 @@ def test_insert_at_array():
 
 
 def test_unsupported():
-    line = 'd-i localechooser/supported-locales multiselect en_US.UTF-8'
-    unsupported(line, {})
+    lines = [
+        'd-i localechooser/supported-locales multiselect en_US.UTF-8',
+        'd-i debian-installer/language string en',
+        'd-i debian-installer/country string NL',
+        'd-i keyboard-configuration/toggle select No toggling',
+    ]
+    for line in lines:
+        unsupported(line, {})
 
 
 def test_duplicate():

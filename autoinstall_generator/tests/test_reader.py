@@ -10,6 +10,7 @@ d-i debian-installer/country string NL
 d-i debian-installer/locale string en_GB.UTF-8
 d-i localechooser/supported-locales multiselect en_US.UTF-8, nl_NL.UTF-8
 d-i keyboard-configuration/xkb-keymap select us
+d-i keyboard-configuration/toggle select No toggling
 d-i netcfg/choose_interface select auto
 d-i netcfg/get_ipaddress string 192.168.1.42
 d-i netcfg/get_netmask string 255.255.255.0

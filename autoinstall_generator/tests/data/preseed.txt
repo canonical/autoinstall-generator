@@ -12,7 +12,7 @@ d-i localechooser/supported-locales multiselect en_US.UTF-8, nl_NL.UTF-8
 
 # Keyboard selection.
 d-i keyboard-configuration/xkb-keymap select us
-# d-i keyboard-configuration/toggle select No toggling
+d-i keyboard-configuration/toggle select No toggling
 
 ### Network configuration
 # Disable network configuration entirely. This is useful for cdrom
