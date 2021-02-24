@@ -1,6 +1,7 @@
 
 import subprocess
 import tempfile
+import pytest
 
 cmd = './autoinstall_generator/bin/autoinstall_generator'
 # FIXME redundant file paths with reader
@@ -39,6 +40,7 @@ def test_convert():
     assert expected == actual
 
 
+@pytest.mark.skip('debug overhaul')
 def test_convert_debug():
     out = tempfile.NamedTemporaryFile()
     process = run([cmd, preseed_path, out.name, '--debug'])
@@ -84,6 +86,7 @@ def test_bad_infile():
     assert 0 != process.returncode
 
 
+@pytest.mark.skip('debug overhaul')
 def test_simple_debug():
     process = run([cmd, simple_path, '--debug'])
     assert 0 == process.returncode

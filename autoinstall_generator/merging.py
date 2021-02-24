@@ -121,11 +121,21 @@ def implied_directives():
     return [Directive({'version': 1}, None, ConversionType.Implied)]
 
 
+def debug_output(directives):
+    trailer = []
+    for cur in directives:
+        out = cur.debug()
+        if out:
+            trailer.append(out)
+    return ''.join(trailer)
+
+
 def convert_file(preseed_file, debug=False):
     directives = implied_directives()
 
-    lines = preseed_file.readlines()
-    directives += [convert(line.strip('\n')) for line in lines]
+    for idx, line in enumerate(preseed_file.readlines()):
+        directives.append(convert(line.strip('\n'), idx + 1))
+
     buckets = bucketize(directives)
     coalesced = buckets.coalesce()
     result_dict = merge(coalesced)
@@ -133,12 +143,6 @@ def convert_file(preseed_file, debug=False):
     result = yaml.dump(result_dict, default_flow_style=False)
 
     if debug:
-        trailer = []
-        for directive in directives:
-            # deliberately written to check against None so that blank
-            # lines are output as a comment
-            if directive.orig_input is not None:
-                trailer.append(f'# {directive.orig_input}\n')
-        result += ''.join(trailer)
+        result += debug_output(directives)
 
     return result

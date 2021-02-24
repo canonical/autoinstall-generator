@@ -1,6 +1,7 @@
 
 import copy
 from enum import Enum
+import yaml
 
 
 class ConversionType(Enum):
@@ -45,13 +46,16 @@ class Directive:
     children : list of Directive
         a list of child Directive objects that were the source of this
         Directive
+    linenumber : int
+        line number in original file
     '''
-    def __init__(self, tree, orig_input, convert_type):
+    def __init__(self, tree, orig_input, convert_type, linenumber=None):
         self.tree = tree
         self.orig_input = orig_input
         self.convert_type = convert_type
         self.fragments = {}
         self.children = []
+        self.linenumber = linenumber
 
     def __repr__(self):
         show_orig = [
@@ -66,6 +70,17 @@ class Directive:
             return f'{self.convert_type.name}:{self.fragments}'
 
         return f'{self.convert_type.name}:{self.tree}'
+
+    def debug(self):
+        linenumber = self.linenumber if self.linenumber else 0
+        prefix = f'{linenumber}:'
+        spacer = len(prefix) * ' '
+        if self.convert_type == ConversionType.OneToOne:
+            mapped = yaml.dump(self.tree)
+            return f'''\
+# {prefix} Directive: {self.orig_input}
+# {spacer} Mapped to: {mapped}'''
+        return None
 
 
 def netmask_bits(value):
@@ -133,7 +148,7 @@ preseed_map = {
 }
 
 
-def dispatch(line, key, value):
+def dispatch(line, key, value, linenumber):
     output = {}
 
     if key in preseed_map:
@@ -150,10 +165,10 @@ def dispatch(line, key, value):
         convert_type = ConversionType.UnknownError
         output = {}
 
-    return Directive(output, line, convert_type)
+    return Directive(output, line, convert_type, linenumber)
 
 
-def convert(line):
+def convert(line, linenumber=None):
     '''Convert Debian install preseed line to Subiquity directive equivalent.
 
     Returns
@@ -168,13 +183,13 @@ def convert(line):
     trimmed = line.strip()
     tokens = trimmed.split(' ')
     if tokens[0] != 'd-i':
-        return Directive({}, line, ConversionType.PassThru)
+        return Directive({}, line, ConversionType.PassThru, linenumber)
 
     value = ''
     if len(tokens) > 3:
         value = ' '.join(tokens[3:])
 
-    return dispatch(line, tokens[1], value)
+    return dispatch(line, tokens[1], value, linenumber)
 
 
 def insert_at_none(tree, value):

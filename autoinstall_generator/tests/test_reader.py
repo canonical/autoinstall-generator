@@ -81,6 +81,7 @@ def test_convert_simple_debug():
     expected = '''\
 locale: en_US
 version: 1
-# d-i debian-installer/locale string en_US
+# 1: Directive: d-i debian-installer/locale string en_US
+#    Mapped to: locale: en_US
 '''
     assert expected == actual
