@@ -49,6 +49,8 @@ class Directive:
     linenumber : int
         line number in original file
     '''
+    largest_linenumber = 0
+
     def __init__(self, tree, orig_input, convert_type, linenumber=None):
         self.tree = tree
         self.orig_input = orig_input
@@ -56,6 +58,8 @@ class Directive:
         self.fragments = {}
         self.children = []
         self.linenumber = linenumber
+        if linenumber and linenumber > Directive.largest_linenumber:
+            Directive.largest_linenumber = linenumber
 
     def __repr__(self):
         show_orig = [
@@ -71,14 +75,21 @@ class Directive:
 
         return f'{self.convert_type.name}:{self.tree}'
 
-    def debug(self):
+    def debug_directive(self, isfirst=False):
         linenumber = self.linenumber if self.linenumber else 0
-        prefix = f'{linenumber}: '
-        spacer = len(prefix) * ' '
-        leader = f'# {prefix}Directive: {self.orig_input}\n'
-        mapped_prefix = f'# {spacer}Mapped to: '
-        mapped_spacer = '#' + ((len(mapped_prefix)-1) * ' ')
+        # space pad linenumbers to match the largest line number seen
+        linenolen = len(str(Directive.largest_linenumber))
+        linenostr = str(linenumber).rjust(linenolen)
+        prefix = f'{linenostr}: '
+        label = 'Directive' if isfirst else '      and'
+        return (f'# {prefix}{label}: {self.orig_input}\n', len(prefix))
+
+    def debug(self):
         if self.convert_type == ConversionType.OneToOne:
+            first, prefixlen = self.debug_directive(True)
+            spacer = ' ' * prefixlen
+            mapped_prefix = f'# {spacer}Mapped to: '
+            mapped_spacer = '#' + ((len(mapped_prefix)-1) * ' ')
             mapped = yaml.dump(self.tree)
             # prefix the dumped yaml with spaces (excluding the first line)
             # so that the yaml is indented over to match the first line.
@@ -86,7 +97,21 @@ class Directive:
             # 14: Directive: d-i keyboard-configuration/xkb-keymap select us
             #     Mapped to: keyboard:
             #                  layout: us
-            return leader + prefixify(mapped, mapped_spacer, mapped_prefix)
+            return first + prefixify(mapped, mapped_spacer, mapped_prefix)
+        if self.convert_type == ConversionType.Coalesced:
+            # similar handling to OneToOne, except we iterate over the
+            # child directives to get the orig_input lines
+            # FIXME redundancy between these two
+            first, prefixlen = self.children[0].debug_directive(True)
+            other_children = [
+                cur.debug_directive(False)[0] for cur in self.children[1:]]
+            rest = ''.join(other_children)
+            spacer = ' ' * prefixlen
+            mapped_prefix = f'# {spacer}Mapped to: '
+            mapped_spacer = '#' + ((len(mapped_prefix)-1) * ' ')
+            mapped = yaml.dump(self.tree)
+            return first + rest + prefixify(mapped, mapped_spacer,
+                                            mapped_prefix)
         return None
 
 
@@ -94,10 +119,9 @@ def is_multiline(data):
     return data.count('\n') > 1
 
 
-def prefixify(data, prefix='# ', first=None):
+def prefixify_lines(lines, prefix='# ', first=None):
     if not first:
         first = prefix
-    lines = data.splitlines()
     prefixed = []
     for i, line in enumerate(lines):
         if i == 0:
@@ -105,6 +129,10 @@ def prefixify(data, prefix='# ', first=None):
         else:
             prefixed.append(f'{prefix}{line}\n')
     return ''.join(prefixed)
+
+
+def prefixify(data, prefix='# ', first=None):
+    return prefixify_lines(data.splitlines(), prefix, first)
 
 
 def netmask_bits(value):
@@ -117,27 +145,27 @@ def netmask_bits(value):
     return bits
 
 
-def fragment(frag, line):
-    directive = Directive({}, line, ConversionType.Dependent)
+def fragment(frag, line, lineno):
+    directive = Directive({}, line, ConversionType.Dependent, lineno)
     directive.fragments = frag
     return directive
 
 
-def netmask(value, line):
+def netmask(value, line, lineno):
     bits = netmask_bits(value)
-    return fragment({'netcfg': {'netmask_bits': bits}}, line)
+    return fragment({'netcfg': {'netmask_bits': bits}}, line, lineno)
 
 
-def ipaddress(value, line):
-    return fragment({'netcfg': {'ipaddress': value}}, line)
+def ipaddress(value, line, lineno):
+    return fragment({'netcfg': {'ipaddress': value}}, line, lineno)
 
 
-def mirror_http_hostname(value, line):
-    return fragment({'mirror/http': {'hostname': value}}, line)
+def mirror_http_hostname(value, line, lineno):
+    return fragment({'mirror/http': {'hostname': value}}, line, lineno)
 
 
-def mirror_http_directory(value, line):
-    return fragment({'mirror/http': {'directory': value}}, line)
+def mirror_http_directory(value, line, lineno):
+    return fragment({'mirror/http': {'directory': value}}, line, lineno)
 
 
 # Translation table to map from preseed values to autoinstall ones.
@@ -176,9 +204,9 @@ def dispatch(line, key, value, linenumber):
     if key in preseed_map:
         mapped_key = preseed_map[key]
         if not mapped_key:
-            return Directive({}, line, ConversionType.Unsupported)
+            return Directive({}, line, ConversionType.Unsupported, linenumber)
         elif callable(mapped_key):
-            return mapped_key(value, line)
+            return mapped_key(value, line, linenumber)
         else:
             output = insert_at_none(copy.deepcopy(mapped_key), value)
 

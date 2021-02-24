@@ -41,3 +41,12 @@ version: 1
 #                      nameservers:
 #                        addresses:
 #                        - 192.168.1.1
+# 52: Directive: d-i netcfg/get_ipaddress string 192.168.1.42
+# 53:       and: d-i netcfg/get_netmask string 255.255.255.0
+#     Mapped to: network:
+#                  ethernets:
+#                      any:
+#                        addresses:
+#                        - 192.168.1.42/24
+#                        match:
+#                          name: en*

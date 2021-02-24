@@ -143,6 +143,6 @@ def convert_file(preseed_file, debug=False):
     result = yaml.dump(result_dict, default_flow_style=False)
 
     if debug:
-        result += debug_output(directives)
+        result += debug_output(coalesced)
 
     return result
