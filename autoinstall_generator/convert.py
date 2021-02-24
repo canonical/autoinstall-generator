@@ -89,7 +89,7 @@ class Directive:
         elif isfirst:
             label = 'Directive'
         else:
-            label = '      And'
+            label = 'And'
         label = label.rjust(len(Directive.longest_label))
         return (f'# {prefix}{label}: {self.orig_input}\n', linenolen)
 
