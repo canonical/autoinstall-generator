@@ -2,6 +2,7 @@
 from autoinstall_generator.convert import convert, Directive, ConversionType
 from autoinstall_generator.merging import (merge, do_merge, coalesce,
                                            bucketize, Bucket)
+import copy
 
 
 def test_basic():
@@ -167,3 +168,22 @@ def test_coalesce_buckets():
 
     assert 1 == len(coalesced)
     assert ConversionType.Dependent != coalesced[0].convert_type
+
+
+def test_coalesce_directives():
+    # the fragments section was being modified as a side effect of the do_merge
+    hostname = 'http.us.debian.org'
+    directory = '/debian'
+
+    directives = [convert(x) for x in [
+            f'd-i mirror/http/hostname string {hostname}',
+            f'd-i mirror/http/directory string {directory}'
+        ]
+    ]
+
+    before = [copy.deepcopy(d) for d in directives]
+    coalesce(directives)
+    after = directives
+
+    for i in range(len(directives)):
+        assert before[i].fragments == after[i].fragments

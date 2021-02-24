@@ -12,6 +12,7 @@ parser.add_argument("inpath")
 # output - subiquity autoinstall
 parser.add_argument('outfile', nargs='?', type=argparse.FileType('w'),
                     default=sys.stdout)
+parser.add_argument('--debug', action='store_true')
 args = parser.parse_args()
 
 infile = None
@@ -24,7 +25,7 @@ try:
         infile_needs_close = True
         infile = open(args.inpath, 'r')
 
-    out = convert_file(infile)
+    out = convert_file(infile, args.debug)
     args.outfile.write(out)
 except:
     raise

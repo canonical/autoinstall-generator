@@ -5,10 +5,6 @@ from autoinstall_generator.merging import merge, bucketize
 # import pytest
 
 
-# FIXME actually generate files
-# FIXME leader version
-
-
 def full_flow(start, expected, convert_type):
     directives = []
 
@@ -140,7 +136,6 @@ def test_di_gateway():
                 'gateway4': value}}}})
 
 
-# @pytest.mark.skip('pending dependent fragments')
 def test_di_address_netmask():
     address = '192.168.1.42'
     mask = '255.255.255.0'
@@ -223,3 +218,68 @@ def test_duplicate():
     actual = merge(directives)
     expected = {'locale': 'en_GB'}
     assert expected == actual
+
+
+def test_directive_repr():
+    dependent = Directive({}, 'netmask', ConversionType.Dependent)
+    dependent.fragments = {'stuff': 'things'}
+    onetoone = Directive({}, '1:1', ConversionType.OneToOne)
+    onetoone.tree = {'first': {'second': 3}}
+    directives = [
+        (Directive({}, 'asdf', ConversionType.UnknownError),
+         'UnknownError:"asdf"'),
+        (Directive({}, 'pass', ConversionType.PassThru),
+         'PassThru:"pass"'),
+        (Directive({}, 'nope', ConversionType.Unsupported),
+         'Unsupported:"nope"'),
+        (dependent, f'Dependent:{dependent.fragments}'),
+        (onetoone, f'OneToOne:{onetoone.tree}'),
+    ]
+
+    for d in directives:
+        assert d[1] == repr(d[0])
+
+
+def test_debug_directive():
+    one = Directive({'stuff': 'things'}, 'my orig input',
+                    ConversionType.OneToOne, 1)
+    expected = '# 1:   Directive: my orig input\n'
+    actual, linenolen = one.debug_directive()
+    assert expected == actual
+    assert 1 == linenolen
+
+
+def test_debug():
+    one = Directive({'stuff': 'things'}, 'my orig input',
+                    ConversionType.OneToOne, 1)
+    expected = '''\
+# 1:   Directive: my orig input
+#      Mapped to: stuff: things
+'''
+    assert expected == one.debug()
+
+
+def test_debug_coallesce():
+    coalesced = Directive({'a': 'b'}, 'asdf', ConversionType.Coalesced, 1)
+    coalesced.children = [
+            Directive({}, 'c', ConversionType.Dependent, 2),
+            Directive({}, 'd', ConversionType.Dependent, 3),
+    ]
+    expected = '''\
+# 2:   Directive: c
+# 3:         And: d
+#      Mapped to: a: b
+'''
+    assert expected == coalesced.debug()
+
+
+def test_debug_unsupported():
+    unsupported = Directive({}, 'qwerty', ConversionType.Unsupported, 7)
+    expected = '# 7: Unsupported: qwerty\n'
+    assert expected == unsupported.debug_directive()[0]
+
+
+def test_debug_error():
+    error = Directive({}, 'oiqwueriower', ConversionType.UnknownError, 6)
+    expected = '# 6:       Error: oiqwueriower\n'
+    assert expected == error.debug_directive()[0]

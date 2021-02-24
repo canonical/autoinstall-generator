@@ -8,7 +8,7 @@ def do_merge(a, b):
     '''Take a pair of dictionaries, and provide the merged result.
        Assumes that any key conflicts have values that are themselves
        dictionaries and raises TypeError if found otherwise.'''
-    result = a
+    result = copy.deepcopy(a)
 
     for key in b:
         if key in result:
@@ -118,23 +118,31 @@ def bucketize(directives):
 
 
 def implied_directives():
-    return [Directive({'version': 1}, '', ConversionType.Implied)]
+    return [Directive({'version': 1}, None, ConversionType.Implied)]
 
 
-def convert_file(preseed_file):
+def debug_output(directives):
+    trailer = []
+    for cur in directives:
+        out = cur.debug()
+        if out:
+            trailer.append(out)
+    return ''.join(trailer)
+
+
+def convert_file(preseed_file, debug=False):
     directives = implied_directives()
-    types = [ConversionType.OneToOne, ConversionType.Dependent]
 
-    # directives = [convert(line) for line in preseed_file.readlines()]
-    for line in preseed_file.readlines():
-        directive = convert(line)
-        if directive.convert_type in types:
-            directives.append(directive)
+    for idx, line in enumerate(preseed_file.readlines()):
+        directives.append(convert(line.strip('\n'), idx + 1))
 
     buckets = bucketize(directives)
     coalesced = buckets.coalesce()
     result_dict = merge(coalesced)
 
     result = yaml.dump(result_dict, default_flow_style=False)
+
+    if debug:
+        result += debug_output(coalesced)
 
     return result

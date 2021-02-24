@@ -1,0 +1,1 @@
+d-i debian-installer/locale string en_US
