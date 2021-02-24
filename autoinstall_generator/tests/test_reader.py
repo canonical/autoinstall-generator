@@ -50,6 +50,7 @@ d-i finish-install/reboot_in_progress note'''
 
 data = 'autoinstall_generator/tests/data'
 preseed_path = f'{data}/preseed.txt'
+simple_path = f'{data}/simple.txt'
 autoinstall_path = f'{data}/preseed2autoinstall.yaml'
 
 
@@ -71,4 +72,15 @@ def test_convert_file():
         actual = convert_file(preseed)
     with open(autoinstall_path, 'r') as autoinstall:
         expected = autoinstall.read()
+    assert expected == actual
+
+
+def test_convert_simple_debug():
+    with open(simple_path, 'r') as simple:
+        actual = convert_file(simple, True)
+    expected = '''\
+locale: en_US
+version: 1
+# d-i debian-installer/locale string en_US
+'''
     assert expected == actual
