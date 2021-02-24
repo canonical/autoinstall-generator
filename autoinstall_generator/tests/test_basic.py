@@ -3,8 +3,6 @@ from autoinstall_generator.convert import (convert, Directive, ConversionType,
                                            netmask_bits, insert_at_none)
 from autoinstall_generator.merging import merge, bucketize
 
-# FIXME coalesce process modifies the original dictionary fragment
-
 
 def full_flow(start, expected, convert_type):
     directives = []
