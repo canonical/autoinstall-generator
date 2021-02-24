@@ -53,6 +53,20 @@ class Directive:
         self.fragments = {}
         self.children = []
 
+    def __repr__(self):
+        show_orig = [
+            ConversionType.UnknownError,
+            ConversionType.PassThru,
+            ConversionType.Unsupported,
+        ]
+        if self.convert_type in show_orig:
+            return f'{self.convert_type.name}:"{self.orig_input}"'
+
+        if self.convert_type == ConversionType.Dependent:
+            return f'{self.convert_type.name}:{self.fragments}'
+
+        return f'{self.convert_type.name}:{self.tree}'
+
 
 def netmask_bits(value):
     # FIXME actually calculate it

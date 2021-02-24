@@ -219,3 +219,23 @@ def test_duplicate():
     actual = merge(directives)
     expected = {'locale': 'en_GB'}
     assert expected == actual
+
+
+def test_directive_repr():
+    dependent = Directive({}, 'netmask', ConversionType.Dependent)
+    dependent.fragments = {'stuff': 'things'}
+    onetoone = Directive({}, '1:1', ConversionType.OneToOne)
+    onetoone.tree = {'first': {'second': 3}}
+    directives = [
+        (Directive({}, 'asdf', ConversionType.UnknownError),
+         'UnknownError:"asdf"'),
+        (Directive({}, 'pass', ConversionType.PassThru),
+         'PassThru:"pass"'),
+        (Directive({}, 'nope', ConversionType.Unsupported),
+         'Unsupported:"nope"'),
+        (dependent, f'Dependent:{dependent.fragments}'),
+        (onetoone, f'OneToOne:{onetoone.tree}'),
+    ]
+
+    for d in directives:
+        assert d[1] == repr(d[0])
