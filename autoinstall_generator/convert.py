@@ -81,12 +81,18 @@ class Directive:
         linenolen = len(str(Directive.largest_linenumber))
         linenostr = str(linenumber).rjust(linenolen)
         prefix = f'{linenostr}: '
-        label = 'Directive' if isfirst else '      And'
+        if self.convert_type == ConversionType.Unsupported:
+            label = 'Unsupported'
+        elif isfirst:
+            label = 'Directive'
+        else:
+            label = '      And'
         return (f'# {prefix}{label}: {self.orig_input}\n', linenolen)
 
     def debug(self):
         first, linenolen, rest = None, None, ''
-        if self.convert_type == ConversionType.OneToOne:
+        if self.convert_type == ConversionType.OneToOne or \
+                self.convert_type == ConversionType.Unsupported:
             first, linenolen = self.debug_directive()
         if self.convert_type == ConversionType.Coalesced:
             # similar handling to OneToOne, except we iterate over the

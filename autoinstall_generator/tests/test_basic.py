@@ -272,3 +272,9 @@ def test_debug_coallesce():
 #    Mapped to: a: b
 '''
     assert expected == coalesced.debug()
+
+
+def test_debug_unsupported():
+    unsupported = Directive({}, 'qwerty', ConversionType.Unsupported, 7)
+    expected = '# 7: Unsupported: qwerty\n'
+    assert expected == unsupported.debug_directive()[0]

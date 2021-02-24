@@ -20,11 +20,19 @@ network:
 version: 1
 #   4: Directive: d-i debian-installer/locale string en_US
 #      Mapped to: locale: en_US
+#   7: Unsupported: d-i debian-installer/language string en
+#      Mapped to: {}
+#   8: Unsupported: d-i debian-installer/country string NL
+#      Mapped to: {}
 #   9: Directive: d-i debian-installer/locale string en_GB.UTF-8
 #      Mapped to: locale: en_GB.UTF-8
+#  11: Unsupported: d-i localechooser/supported-locales multiselect en_US.UTF-8, nl_NL.UTF-8
+#      Mapped to: {}
 #  14: Directive: d-i keyboard-configuration/xkb-keymap select us
 #      Mapped to: keyboard:
 #                   layout: us
+#  15: Unsupported: d-i keyboard-configuration/toggle select No toggling
+#      Mapped to: {}
 #  54: Directive: d-i netcfg/get_gateway string 192.168.1.1
 #      Mapped to: network:
 #                   ethernets:
