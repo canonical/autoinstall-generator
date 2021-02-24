@@ -83,6 +83,8 @@ class Directive:
         prefix = f'{linenostr}: '
         if self.convert_type == ConversionType.Unsupported:
             label = 'Unsupported'
+        elif self.convert_type == ConversionType.UnknownError:
+            label = 'Error'
         elif isfirst:
             label = 'Directive'
         else:
@@ -92,7 +94,8 @@ class Directive:
     def debug(self):
         first, linenolen, rest = None, None, ''
         if self.convert_type == ConversionType.OneToOne or \
-                self.convert_type == ConversionType.Unsupported:
+                self.convert_type == ConversionType.Unsupported or \
+                self.convert_type == ConversionType.UnknownError:
             first, linenolen = self.debug_directive()
         if self.convert_type == ConversionType.Coalesced:
             # similar handling to OneToOne, except we iterate over the
@@ -106,7 +109,7 @@ class Directive:
         spacer = ' ' * (linenolen + 2)
         mapped_prefix = f'# {spacer}Mapped to: '
         mapped_spacer = '#' + ((len(mapped_prefix)-1) * ' ')
-        mapped = yaml.dump(self.tree)
+        mapped = yaml.dump(self.tree) if len(self.tree) else ''
         # prefix the dumped yaml with spaces (excluding the first line)
         # so that the yaml is indented over to match the first line.
         # result looks like:

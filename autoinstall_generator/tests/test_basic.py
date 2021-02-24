@@ -278,3 +278,9 @@ def test_debug_unsupported():
     unsupported = Directive({}, 'qwerty', ConversionType.Unsupported, 7)
     expected = '# 7: Unsupported: qwerty\n'
     assert expected == unsupported.debug_directive()[0]
+
+
+def test_debug_error():
+    error = Directive({}, 'oiqwueriower', ConversionType.UnknownError, 6)
+    expected = '# 6: Error: oiqwueriower\n'
+    assert expected == error.debug_directive()[0]
