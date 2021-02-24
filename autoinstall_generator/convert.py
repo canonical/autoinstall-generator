@@ -93,29 +93,27 @@ def netmask_bits(value):
     return bits
 
 
+def fragment(frag, line):
+    directive = Directive({}, line, ConversionType.Dependent)
+    directive.fragments = frag
+    return directive
+
+
 def netmask(value, line):
     bits = netmask_bits(value)
-    directive = Directive({}, line, ConversionType.Dependent)
-    directive.fragments = {'netcfg': {'netmask_bits': bits}}
-    return directive
+    return fragment({'netcfg': {'netmask_bits': bits}}, line)
 
 
 def ipaddress(value, line):
-    directive = Directive({}, line, ConversionType.Dependent)
-    directive.fragments = {'netcfg': {'ipaddress': value}}
-    return directive
+    return fragment({'netcfg': {'ipaddress': value}}, line)
 
 
 def mirror_http_hostname(value, line):
-    directive = Directive({}, line, ConversionType.Dependent)
-    directive.fragments = {'mirror/http': {'hostname': value}}
-    return directive
+    return fragment({'mirror/http': {'hostname': value}}, line)
 
 
 def mirror_http_directory(value, line):
-    directive = Directive({}, line, ConversionType.Dependent)
-    directive.fragments = {'mirror/http': {'directory': value}}
-    return directive
+    return fragment({'mirror/http': {'directory': value}}, line)
 
 
 # Translation table to map from preseed values to autoinstall ones.
