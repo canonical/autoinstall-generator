@@ -85,34 +85,29 @@ class Directive:
         return (f'# {prefix}{label}: {self.orig_input}\n', linenolen)
 
     def debug(self):
+        first, linenolen, rest = None, None, ''
         if self.convert_type == ConversionType.OneToOne:
             first, linenolen = self.debug_directive()
-            spacer = ' ' * (linenolen + 2)
-            mapped_prefix = f'# {spacer}Mapped to: '
-            mapped_spacer = '#' + ((len(mapped_prefix)-1) * ' ')
-            mapped = yaml.dump(self.tree)
-            # prefix the dumped yaml with spaces (excluding the first line)
-            # so that the yaml is indented over to match the first line.
-            # result looks like:
-            # 14: Directive: d-i keyboard-configuration/xkb-keymap select us
-            #     Mapped to: keyboard:
-            #                  layout: us
-            return first + prefixify(mapped, mapped_spacer, mapped_prefix)
         if self.convert_type == ConversionType.Coalesced:
             # similar handling to OneToOne, except we iterate over the
             # child directives to get the orig_input lines
-            # FIXME redundancy between these two
             first, linenolen = self.children[0].debug_directive()
             other_children = [
                 cur.debug_directive(False)[0] for cur in self.children[1:]]
             rest = ''.join(other_children)
-            spacer = ' ' * (linenolen + 2)
-            mapped_prefix = f'# {spacer}Mapped to: '
-            mapped_spacer = '#' + ((len(mapped_prefix)-1) * ' ')
-            mapped = yaml.dump(self.tree)
-            return first + rest + prefixify(mapped, mapped_spacer,
-                                            mapped_prefix)
-        return None
+        if not first:
+            return None
+        spacer = ' ' * (linenolen + 2)
+        mapped_prefix = f'# {spacer}Mapped to: '
+        mapped_spacer = '#' + ((len(mapped_prefix)-1) * ' ')
+        mapped = yaml.dump(self.tree)
+        # prefix the dumped yaml with spaces (excluding the first line)
+        # so that the yaml is indented over to match the first line.
+        # result looks like:
+        # 14: Directive: d-i keyboard-configuration/xkb-keymap select us
+        #     Mapped to: keyboard:
+        #                  layout: us
+        return first + rest + prefixify(mapped, mapped_spacer, mapped_prefix)
 
 
 def is_multiline(data):
