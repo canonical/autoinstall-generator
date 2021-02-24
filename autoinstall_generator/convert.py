@@ -50,6 +50,7 @@ class Directive:
         line number in original file
     '''
     largest_linenumber = 0
+    longest_label = 'Unsupported'
 
     def __init__(self, tree, orig_input, convert_type, linenumber=None):
         self.tree = tree
@@ -89,6 +90,7 @@ class Directive:
             label = 'Directive'
         else:
             label = '      And'
+        label = label.rjust(len(Directive.longest_label))
         return (f'# {prefix}{label}: {self.orig_input}\n', linenolen)
 
     def debug(self):
@@ -107,7 +109,8 @@ class Directive:
         if not first:
             return None
         spacer = ' ' * (linenolen + 2)
-        mapped_prefix = f'# {spacer}Mapped to: '
+        label = 'Mapped to'.rjust(len(Directive.longest_label))
+        mapped_prefix = f'# {spacer}{label}: '
         mapped_spacer = '#' + ((len(mapped_prefix)-1) * ' ')
         mapped = yaml.dump(self.tree) if len(self.tree) else ''
         # prefix the dumped yaml with spaces (excluding the first line)

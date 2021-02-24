@@ -84,7 +84,7 @@ def test_simple_debug():
     expected = '''\
 locale: en_US
 version: 1
-# 1: Directive: d-i debian-installer/locale string en_US
-#    Mapped to: locale: en_US
+# 1:   Directive: d-i debian-installer/locale string en_US
+#      Mapped to: locale: en_US
 '''
     assert expected == str(process.stdout)

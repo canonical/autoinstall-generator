@@ -243,19 +243,18 @@ def test_directive_repr():
 def test_debug_directive():
     one = Directive({'stuff': 'things'}, 'my orig input',
                     ConversionType.OneToOne, 1)
-    expected = '# 1: Directive: my orig input\n'
+    expected = '# 1:   Directive: my orig input\n'
     actual, linenolen = one.debug_directive()
     assert expected == actual
     assert 1 == linenolen
 
 
-# @pytest.mark.skip('debug overhaul')
 def test_debug():
     one = Directive({'stuff': 'things'}, 'my orig input',
                     ConversionType.OneToOne, 1)
     expected = '''\
-# 1: Directive: my orig input
-#    Mapped to: stuff: things
+# 1:   Directive: my orig input
+#      Mapped to: stuff: things
 '''
     assert expected == one.debug()
 
@@ -267,9 +266,9 @@ def test_debug_coallesce():
             Directive({}, 'd', ConversionType.Dependent, 3),
     ]
     expected = '''\
-# 2: Directive: c
-# 3:       And: d
-#    Mapped to: a: b
+# 2:   Directive: c
+# 3:         And: d
+#      Mapped to: a: b
 '''
     assert expected == coalesced.debug()
 
@@ -282,5 +281,5 @@ def test_debug_unsupported():
 
 def test_debug_error():
     error = Directive({}, 'oiqwueriower', ConversionType.UnknownError, 6)
-    expected = '# 6: Error: oiqwueriower\n'
+    expected = '# 6:       Error: oiqwueriower\n'
     assert expected == error.debug_directive()[0]

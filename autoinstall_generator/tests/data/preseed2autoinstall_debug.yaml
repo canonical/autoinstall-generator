@@ -18,75 +18,75 @@ network:
         addresses:
         - 192.168.1.1
 version: 1
-#   4: Directive: d-i debian-installer/locale string en_US
-#      Mapped to: locale: en_US
+#   4:   Directive: d-i debian-installer/locale string en_US
+#        Mapped to: locale: en_US
 #   7: Unsupported: d-i debian-installer/language string en
 #   8: Unsupported: d-i debian-installer/country string NL
-#   9: Directive: d-i debian-installer/locale string en_GB.UTF-8
-#      Mapped to: locale: en_GB.UTF-8
+#   9:   Directive: d-i debian-installer/locale string en_GB.UTF-8
+#        Mapped to: locale: en_GB.UTF-8
 #  11: Unsupported: d-i localechooser/supported-locales multiselect en_US.UTF-8, nl_NL.UTF-8
-#  14: Directive: d-i keyboard-configuration/xkb-keymap select us
-#      Mapped to: keyboard:
-#                   layout: us
+#  14:   Directive: d-i keyboard-configuration/xkb-keymap select us
+#        Mapped to: keyboard:
+#                     layout: us
 #  15: Unsupported: d-i keyboard-configuration/toggle select No toggling
-#  25: Error: d-i netcfg/choose_interface select auto
-#  54: Directive: d-i netcfg/get_gateway string 192.168.1.1
-#      Mapped to: network:
-#                   ethernets:
-#                     any:
-#                       gateway4: 192.168.1.1
-#                       match:
-#                         name: en*
-#  55: Directive: d-i netcfg/get_nameservers string 192.168.1.1
-#      Mapped to: network:
-#                   ethernets:
-#                     any:
-#                       match:
-#                         name: en*
-#                       nameservers:
+#  25:       Error: d-i netcfg/choose_interface select auto
+#  54:   Directive: d-i netcfg/get_gateway string 192.168.1.1
+#        Mapped to: network:
+#                     ethernets:
+#                       any:
+#                         gateway4: 192.168.1.1
+#                         match:
+#                           name: en*
+#  55:   Directive: d-i netcfg/get_nameservers string 192.168.1.1
+#        Mapped to: network:
+#                     ethernets:
+#                       any:
+#                         match:
+#                           name: en*
+#                         nameservers:
+#                           addresses:
+#                           - 192.168.1.1
+#  56:       Error: d-i netcfg/confirm_static boolean true
+#  68:       Error: d-i netcfg/get_hostname string unassigned-hostname
+#  69:       Error: d-i netcfg/get_domain string unassigned-domain
+#  77:       Error: d-i netcfg/wireless_wep string
+#  98:       Error: d-i mirror/country string manual
+# 101:       Error: d-i mirror/http/proxy string
+# 138:       Error: d-i clock-setup/utc boolean true
+# 142:       Error: d-i time/zone string US/Eastern
+# 145:       Error: d-i clock-setup/ntp boolean true
+# 166:       Error: d-i partman-auto/method string lvm
+# 171:       Error: d-i partman-auto-lvm/guided_size string max
+# 176:       Error: d-i partman-lvm/device_remove_lvm boolean true
+# 178:       Error: d-i partman-md/device_remove_md boolean true
+# 180:       Error: d-i partman-lvm/confirm boolean true
+# 181:       Error: d-i partman-lvm/confirm_nooverwrite boolean true
+# 187:       Error: d-i partman-auto/choose_recipe select atomic
+# 222:       Error: d-i partman-partitioning/confirm_write_new_label boolean true
+# 223:       Error: d-i partman/choose_partition select finish
+# 224:       Error: d-i partman/confirm boolean true
+# 225:       Error: d-i partman/confirm_nooverwrite boolean true
+# 274:       Error: d-i partman-md/confirm boolean true
+# 275:       Error: d-i partman-partitioning/confirm_write_new_label boolean true
+# 276:       Error: d-i partman/choose_partition select finish
+# 277:       Error: d-i partman/confirm boolean true
+# 278:       Error: d-i partman/confirm_nooverwrite boolean true
+# 353:       Error: d-i grub-installer/only_debian boolean true
+# 357:       Error: d-i grub-installer/with_other_os boolean true
+# 391:       Error: d-i finish-install/reboot_in_progress note
+#  52:   Directive: d-i netcfg/get_ipaddress string 192.168.1.42
+#  53:         And: d-i netcfg/get_netmask string 255.255.255.0
+#        Mapped to: network:
+#                     ethernets:
+#                       any:
 #                         addresses:
-#                         - 192.168.1.1
-#  56: Error: d-i netcfg/confirm_static boolean true
-#  68: Error: d-i netcfg/get_hostname string unassigned-hostname
-#  69: Error: d-i netcfg/get_domain string unassigned-domain
-#  77: Error: d-i netcfg/wireless_wep string
-#  98: Error: d-i mirror/country string manual
-# 101: Error: d-i mirror/http/proxy string
-# 138: Error: d-i clock-setup/utc boolean true
-# 142: Error: d-i time/zone string US/Eastern
-# 145: Error: d-i clock-setup/ntp boolean true
-# 166: Error: d-i partman-auto/method string lvm
-# 171: Error: d-i partman-auto-lvm/guided_size string max
-# 176: Error: d-i partman-lvm/device_remove_lvm boolean true
-# 178: Error: d-i partman-md/device_remove_md boolean true
-# 180: Error: d-i partman-lvm/confirm boolean true
-# 181: Error: d-i partman-lvm/confirm_nooverwrite boolean true
-# 187: Error: d-i partman-auto/choose_recipe select atomic
-# 222: Error: d-i partman-partitioning/confirm_write_new_label boolean true
-# 223: Error: d-i partman/choose_partition select finish
-# 224: Error: d-i partman/confirm boolean true
-# 225: Error: d-i partman/confirm_nooverwrite boolean true
-# 274: Error: d-i partman-md/confirm boolean true
-# 275: Error: d-i partman-partitioning/confirm_write_new_label boolean true
-# 276: Error: d-i partman/choose_partition select finish
-# 277: Error: d-i partman/confirm boolean true
-# 278: Error: d-i partman/confirm_nooverwrite boolean true
-# 353: Error: d-i grub-installer/only_debian boolean true
-# 357: Error: d-i grub-installer/with_other_os boolean true
-# 391: Error: d-i finish-install/reboot_in_progress note
-#  52: Directive: d-i netcfg/get_ipaddress string 192.168.1.42
-#  53:       And: d-i netcfg/get_netmask string 255.255.255.0
-#      Mapped to: network:
-#                   ethernets:
-#                     any:
-#                       addresses:
-#                       - 192.168.1.42/24
-#                       match:
-#                         name: en*
-#  99: Directive: d-i mirror/http/hostname string http.us.debian.org
-# 100:       And: d-i mirror/http/directory string /debian
-#      Mapped to: apt:
-#                   primary:
-#                   - arches:
-#                     - default
-#                     uri: http://http.us.debian.org/debian
+#                         - 192.168.1.42/24
+#                         match:
+#                           name: en*
+#  99:   Directive: d-i mirror/http/hostname string http.us.debian.org
+# 100:         And: d-i mirror/http/directory string /debian
+#        Mapped to: apt:
+#                     primary:
+#                     - arches:
+#                       - default
+#                       uri: http://http.us.debian.org/debian
