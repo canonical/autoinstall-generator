@@ -1,0 +1,43 @@
+apt:
+  primary:
+  - arches:
+    - default
+    uri: http://http.us.debian.org/debian
+keyboard:
+  layout: us
+locale: en_GB.UTF-8
+network:
+  ethernets:
+    any:
+      addresses:
+      - 192.168.1.42/24
+      gateway4: 192.168.1.1
+      match:
+        name: en*
+      nameservers:
+        addresses:
+        - 192.168.1.1
+version: 1
+# 4: Directive: d-i debian-installer/locale string en_US
+#    Mapped to: locale: en_US
+# 9: Directive: d-i debian-installer/locale string en_GB.UTF-8
+#    Mapped to: locale: en_GB.UTF-8
+# 14: Directive: d-i keyboard-configuration/xkb-keymap select us
+#     Mapped to: keyboard:
+#                  layout: us
+# 54: Directive: d-i netcfg/get_gateway string 192.168.1.1
+#     Mapped to: network:
+#                  ethernets:
+#                    any:
+#                      gateway4: 192.168.1.1
+#                      match:
+#                        name: en*
+# 55: Directive: d-i netcfg/get_nameservers string 192.168.1.1
+#     Mapped to: network:
+#                  ethernets:
+#                    any:
+#                      match:
+#                        name: en*
+#                      nameservers:
+#                        addresses:
+#                        - 192.168.1.1

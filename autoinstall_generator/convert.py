@@ -73,14 +73,38 @@ class Directive:
 
     def debug(self):
         linenumber = self.linenumber if self.linenumber else 0
-        prefix = f'{linenumber}:'
+        prefix = f'{linenumber}: '
         spacer = len(prefix) * ' '
+        leader = f'# {prefix}Directive: {self.orig_input}\n'
+        mapped_prefix = f'# {spacer}Mapped to: '
+        mapped_spacer = '#' + ((len(mapped_prefix)-1) * ' ')
         if self.convert_type == ConversionType.OneToOne:
             mapped = yaml.dump(self.tree)
-            return f'''\
-# {prefix} Directive: {self.orig_input}
-# {spacer} Mapped to: {mapped}'''
+            # prefix the dumped yaml with spaces (excluding the first line)
+            # so that the yaml is indented over to match the first line.
+            # result looks like:
+            # 14: Directive: d-i keyboard-configuration/xkb-keymap select us
+            #     Mapped to: keyboard:
+            #                  layout: us
+            return leader + prefixify(mapped, mapped_spacer, mapped_prefix)
         return None
+
+
+def is_multiline(data):
+    return data.count('\n') > 1
+
+
+def prefixify(data, prefix='# ', first=None):
+    if not first:
+        first = prefix
+    lines = data.splitlines()
+    prefixed = []
+    for i, line in enumerate(lines):
+        if i == 0:
+            prefixed.append(f'{first}{line}\n')
+        else:
+            prefixed.append(f'{prefix}{line}\n')
+    return ''.join(prefixed)
 
 
 def netmask_bits(value):

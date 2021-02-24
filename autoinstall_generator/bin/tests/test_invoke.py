@@ -1,13 +1,15 @@
 
 import subprocess
 import tempfile
-import pytest
+# import pytest
+# @pytest.mark.skip('debug overhaul')
 
 cmd = './autoinstall_generator/bin/autoinstall_generator'
 # FIXME redundant file paths with reader
 data = 'autoinstall_generator/tests/data'
 preseed_path = f'{data}/preseed.txt'
 autoinstall_path = f'{data}/preseed2autoinstall.yaml'
+autoinstall_debug_path = f'{data}/preseed2autoinstall_debug.yaml'
 
 simple_path = f'{data}/simple.txt'
 
@@ -19,11 +21,6 @@ def run(args, **kwargs):
 def file_contents(path):
     with open(path, 'r') as f:
         return f.read()
-
-
-def file_lines(path):
-    with open(path, 'r') as f:
-        return [line.strip('\n') for line in f.readlines()]
 
 
 def test_invoke():
@@ -40,14 +37,11 @@ def test_convert():
     assert expected == actual
 
 
-@pytest.mark.skip('debug overhaul')
 def test_convert_debug():
     out = tempfile.NamedTemporaryFile()
     process = run([cmd, preseed_path, out.name, '--debug'])
     assert 0 == process.returncode
-    preseed_lines = file_lines(preseed_path)
-    commented_input = ''.join([f'# {line}\n' for line in preseed_lines])
-    expected = file_contents(autoinstall_path) + commented_input
+    expected = file_contents(autoinstall_debug_path)
     actual = file_contents(out.name)
     assert expected == actual
 
@@ -86,13 +80,13 @@ def test_bad_infile():
     assert 0 != process.returncode
 
 
-@pytest.mark.skip('debug overhaul')
 def test_simple_debug():
     process = run([cmd, simple_path, '--debug'])
     assert 0 == process.returncode
     expected = '''\
 locale: en_US
 version: 1
-# d-i debian-installer/locale string en_US
+# 1: Directive: d-i debian-installer/locale string en_US
+#    Mapped to: locale: en_US
 '''
     assert expected == str(process.stdout)
