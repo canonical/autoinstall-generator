@@ -1,8 +1,6 @@
 
 import subprocess
 import tempfile
-# import pytest
-# @pytest.mark.skip('debug overhaul')
 
 cmd = './autoinstall_generator/bin/autoinstall_generator'
 # FIXME redundant file paths with reader

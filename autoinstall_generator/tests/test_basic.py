@@ -2,6 +2,7 @@
 from autoinstall_generator.convert import (convert, Directive, ConversionType,
                                            netmask_bits, insert_at_none)
 from autoinstall_generator.merging import merge, bucketize
+# import pytest
 
 
 def full_flow(start, expected, convert_type):
@@ -237,3 +238,37 @@ def test_directive_repr():
 
     for d in directives:
         assert d[1] == repr(d[0])
+
+
+def test_debug_directive():
+    one = Directive({'stuff': 'things'}, 'my orig input',
+                    ConversionType.OneToOne, 1)
+    expected = '# 1: Directive: my orig input\n'
+    actual, linenolen = one.debug_directive()
+    assert expected == actual
+    assert 1 == linenolen
+
+
+# @pytest.mark.skip('debug overhaul')
+def test_debug():
+    one = Directive({'stuff': 'things'}, 'my orig input',
+                    ConversionType.OneToOne, 1)
+    expected = '''\
+# 1: Directive: my orig input
+#    Mapped to: stuff: things
+'''
+    assert expected == one.debug()
+
+
+def test_debug_coallesce():
+    coalesced = Directive({'a': 'b'}, 'asdf', ConversionType.Coalesced, 1)
+    coalesced.children = [
+            Directive({}, 'c', ConversionType.Dependent, 2),
+            Directive({}, 'd', ConversionType.Dependent, 3),
+    ]
+    expected = '''\
+# 2: Directive: c
+# 3:       And: d
+#    Mapped to: a: b
+'''
+    assert expected == coalesced.debug()

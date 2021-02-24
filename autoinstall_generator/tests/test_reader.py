@@ -1,6 +1,12 @@
 
-from autoinstall_generator.convert import convert, ConversionType
+from autoinstall_generator.convert import convert, ConversionType, Directive
 from autoinstall_generator.merging import convert_file
+import pytest
+
+
+@pytest.fixture(autouse=True)
+def reset_largest_lineno():
+    Directive.largest_linenumber = 0
 
 
 expected_lines = '''\

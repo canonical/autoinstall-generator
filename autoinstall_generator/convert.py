@@ -75,19 +75,19 @@ class Directive:
 
         return f'{self.convert_type.name}:{self.tree}'
 
-    def debug_directive(self, isfirst=False):
+    def debug_directive(self, isfirst=True):
         linenumber = self.linenumber if self.linenumber else 0
         # space pad linenumbers to match the largest line number seen
         linenolen = len(str(Directive.largest_linenumber))
         linenostr = str(linenumber).rjust(linenolen)
         prefix = f'{linenostr}: '
-        label = 'Directive' if isfirst else '      and'
-        return (f'# {prefix}{label}: {self.orig_input}\n', len(prefix))
+        label = 'Directive' if isfirst else '      And'
+        return (f'# {prefix}{label}: {self.orig_input}\n', linenolen)
 
     def debug(self):
         if self.convert_type == ConversionType.OneToOne:
-            first, prefixlen = self.debug_directive(True)
-            spacer = ' ' * prefixlen
+            first, linenolen = self.debug_directive()
+            spacer = ' ' * (linenolen + 2)
             mapped_prefix = f'# {spacer}Mapped to: '
             mapped_spacer = '#' + ((len(mapped_prefix)-1) * ' ')
             mapped = yaml.dump(self.tree)
@@ -102,11 +102,11 @@ class Directive:
             # similar handling to OneToOne, except we iterate over the
             # child directives to get the orig_input lines
             # FIXME redundancy between these two
-            first, prefixlen = self.children[0].debug_directive(True)
+            first, linenolen = self.children[0].debug_directive()
             other_children = [
                 cur.debug_directive(False)[0] for cur in self.children[1:]]
             rest = ''.join(other_children)
-            spacer = ' ' * prefixlen
+            spacer = ' ' * (linenolen + 2)
             mapped_prefix = f'# {spacer}Mapped to: '
             mapped_spacer = '#' + ((len(mapped_prefix)-1) * ' ')
             mapped = yaml.dump(self.tree)
