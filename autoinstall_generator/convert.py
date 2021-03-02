@@ -218,6 +218,7 @@ preseed_map = {
     'debian-installer/language': None,
     'debian-installer/country': None,
     'keyboard-configuration/toggle': None,
+    'partman-auto/disk': None,
 }
 
 

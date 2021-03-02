@@ -58,6 +58,7 @@ version: 1
 # 138:       Error: d-i clock-setup/utc boolean true
 # 142:       Error: d-i time/zone string US/Eastern
 # 145:       Error: d-i clock-setup/ntp boolean true
+# 160: Unsupported: d-i partman-auto/disk string /dev/sda
 # 166:   Directive: d-i partman-auto/method string lvm
 #        Mapped to: storage:
 #                     layout:

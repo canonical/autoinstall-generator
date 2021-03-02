@@ -214,6 +214,7 @@ def test_unsupported():
         'd-i debian-installer/language string en',
         'd-i debian-installer/country string NL',
         'd-i keyboard-configuration/toggle select No toggling',
+        'd-i partman-auto/disk string /dev/sda',
     ]
     for line in lines:
         unsupported(line, {})
