@@ -2,7 +2,7 @@
 import subprocess
 import tempfile
 
-cmd = './autoinstall_generator/cmd/autoinstall_generator.py'
+cmd = './autoinstall_generator/cmd/autoinstall-generator.py'
 # FIXME redundant file paths with reader
 data = 'autoinstall_generator/tests/data'
 preseed_path = f'{data}/preseed.txt'
@@ -61,7 +61,7 @@ def test_pipe():
 def test_help():
     process = run([cmd, '--help'])
     actual = process.stdout.split('\n')[0]
-    expected = 'usage: autoinstall_generator'
+    expected = 'usage: autoinstall-generator'
     assert actual.startswith(expected)
     assert 0 == process.returncode
 
