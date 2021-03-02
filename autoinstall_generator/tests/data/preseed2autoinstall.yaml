@@ -17,4 +17,7 @@ network:
       nameservers:
         addresses:
         - 192.168.1.1
+storage:
+  layout:
+    name: lvm
 version: 1

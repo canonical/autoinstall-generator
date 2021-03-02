@@ -175,6 +175,21 @@ def mirror_http_directory(value, line, lineno):
     return fragment({'mirror/http': {'directory': value}}, line, lineno)
 
 
+def partman_method(value, line, lineno):
+    template = {'storage': {'layout': {'name': None}}}
+    layout_name = ''
+    if value == 'lvm':
+        layout_name = value
+    elif value == 'regular':
+        layout_name = 'direct'
+    else:
+        return Directive({}, line, ConversionType.UnknownError, lineno)
+
+    output = insert_at_none(template, layout_name)
+    return Directive(output, line, ConversionType.OneToOne, lineno)
+
+
+# Directive(output, line, convert_type, linenumber)
 # Translation table to map from preseed values to autoinstall ones.
 # key: d-i style directive key
 # value: dictionary for simple mapping, function for more exciting one,
@@ -198,10 +213,12 @@ preseed_map = {
     'netcfg/get_ipaddress': ipaddress,
     'mirror/http/hostname': mirror_http_hostname,
     'mirror/http/directory': mirror_http_directory,
+    'partman-auto/method': partman_method,
     'localechooser/supported-locales': None,
     'debian-installer/language': None,
     'debian-installer/country': None,
     'keyboard-configuration/toggle': None,
+    'partman-auto/disk': None,
 }
 
 
