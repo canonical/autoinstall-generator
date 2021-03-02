@@ -2,7 +2,7 @@
 import subprocess
 import tempfile
 
-cmd = './autoinstall_generator/bin/autoinstall_generator'
+cmd = './autoinstall_generator/cmd/autoinstall_generator.py'
 # FIXME redundant file paths with reader
 data = 'autoinstall_generator/tests/data'
 preseed_path = f'{data}/preseed.txt'
