@@ -35,6 +35,10 @@ def unsupported(start, expected):
     full_flow(start, expected, ConversionType.Unsupported)
 
 
+def unknown_error(start):
+    full_flow(start, {}, ConversionType.UnknownError)
+
+
 def test_directive():
     orig = 'my input'
     output = 'my output'
@@ -171,6 +175,8 @@ def test_di_partman_method():
     for pair in maps:
         expected = {'storage': {'layout': {'name': pair[1]}}}
         one_to_one(f'd-i partman-auto/method string {pair[0]}', expected)
+
+    unknown_error('d-i partman-auto/method string asdf')
 
 
 def test_dependent():
