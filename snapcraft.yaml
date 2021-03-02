@@ -1,0 +1,46 @@
+name: autoinstall-generator
+version: '0.0.1'
+summary: Utility to convert Debian Installer preseed to Subiquity answers
+description: |
+  Ingest Debian preseed format file(s), and provide compatible Subiquity
+  autoinstall in response.
+confinement: strict
+base: core18
+grade: stable
+
+parts:
+  autoinstall-generator:
+    plugin: python
+    python-version: python3
+    source: .
+    # source: https://github.com/canonical/autoinstall-generator.git
+    requirements: [requirements.txt]
+    organize:
+      'bin/autoinstall-generator.py': usr/bin/autoinstall-generator
+    build-packages:
+      - python3-pip
+      - python3-setuptools
+      - python3-wheel
+    stage-packages:
+      - python3-yaml
+      - python3.6-minimal
+
+  # More info: https://forum.snapcraft.io/t/reducing-the-size-of-desktop-snaps/17280#heading--cleanup-part
+  # Temporarily disabled - if this is allowed to run, the resulting snap is
+  # unable to find the autoinstall_generator package
+  # cleanup:
+  #   after:
+  #     - autoinstall-generator
+  #   plugin: nil
+  #   build-snaps:
+  #     - core18
+  #   override-prime: |
+  #     set -eux
+  #     for snap in "core18"; do
+  #       cd "/snap/$snap/current"
+  #       find . -type f,l -exec rm -f "$SNAPCRAFT_PRIME/{}" \;
+  #     done
+
+apps:
+  autoinstall-generator:
+    command: usr/bin/autoinstall-generator
