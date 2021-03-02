@@ -1,5 +1,6 @@
 
 import subprocess
+from subprocess import PIPE
 import tempfile
 
 cmd = './autoinstall_generator/cmd/autoinstall-generator.py'
@@ -13,7 +14,8 @@ simple_path = f'{data}/simple.txt'
 
 
 def run(args, **kwargs):
-    return subprocess.run(args, capture_output=True, text=True, **kwargs)
+    return subprocess.run(args, universal_newlines=True,
+                          stdout=PIPE, stderr=PIPE, **kwargs)
 
 
 def file_contents(path):

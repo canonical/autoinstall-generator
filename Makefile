@@ -6,8 +6,7 @@ all: check build
 new: clean all
 
 install_deps:
-	sudo apt install tox python3-pep517 python3-testresources \
-		python3-setuptools
+	sudo apt install tox python3-testresources python3-setuptools
 
 clean:
 	rm -fr *.egg-info build dist
