@@ -164,6 +164,15 @@ def test_di_mirror():
               expected)
 
 
+def test_di_partman_method():
+    # lvm -> lvm
+    # regular -> direct
+    maps = [('lvm', 'lvm'), ('regular', 'direct')]
+    for pair in maps:
+        expected = {'storage': {'layout': {'name': pair[1]}}}
+        one_to_one(f'd-i partman-auto/method string {pair[0]}', expected)
+
+
 def test_dependent():
     value = 'asdf'
     for key in ['hostname', 'directory']:
