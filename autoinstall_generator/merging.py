@@ -1,6 +1,8 @@
 
 from autoinstall_generator.convert import convert, Directive, ConversionType
 import copy
+import json
+import jsonschema
 import yaml
 
 
@@ -120,6 +122,14 @@ def bucketize(directives):
     return bucket
 
 
+def validate_yaml(tree):
+    with open('autoinstall-schema.json', 'r') as fp:
+        schema_data = fp.read()
+        schema = json.loads(schema_data)
+
+    jsonschema.validate(tree, schema)
+
+
 def implied_directives():
     return [Directive({'version': 1}, None, ConversionType.Implied)]
 
@@ -142,6 +152,8 @@ def convert_file(preseed_file, debug=False):
     buckets = bucketize(directives)
     coalesced = buckets.coalesce()
     result_dict = merge(coalesced)
+
+    validate_yaml(result_dict)
 
     result = yaml.dump(result_dict, default_flow_style=False)
 
