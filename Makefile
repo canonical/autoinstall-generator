@@ -9,7 +9,7 @@ install_deps:
 	sudo apt install tox python3-testresources python3-setuptools
 
 clean:
-	rm -fr *.egg-info build dist
+	rm -fr *.egg-info build dist README.html
 
 distclean: clean
 	-find . -type d -name __pycache__ | xargs rm -fr
@@ -36,10 +36,13 @@ snap-clean:
 snap-install:
 	sudo snap install *.snap --dangerous --devmode
 
+html:
+	markdown README.md > README.html
+
 invoke:
 	@PYTHONPATH=$(shell realpath .) \
 		autoinstall_generator/cmd/autoinstall-generator.py \
 		autoinstall_generator/tests/data/preseed.txt --debug
 
 .PHONY: default all new install_deps clean distclean build lint test check
-.PHONY: snap invoke snap-clean snap-install
+.PHONY: snap invoke snap-clean snap-install html

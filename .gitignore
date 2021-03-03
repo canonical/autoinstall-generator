@@ -8,3 +8,4 @@ dist
 .coverage
 .tags
 *.snap
+README.html
