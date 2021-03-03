@@ -1,6 +1,8 @@
 
 from autoinstall_generator.convert import convert, Directive, ConversionType
 import copy
+import json
+import jsonschema
 import yaml
 
 
@@ -53,10 +55,13 @@ def netcfg(parent_directive):
     netmask_bits = parent_directive.fragments['netcfg']['netmask_bits']
     ipaddress = parent_directive.fragments['netcfg']['ipaddress']
     parent_directive.tree = {
-        'network': {'ethernets': {'any': {
-            'match': {'name': 'en*'},
-            'addresses': [f'{ipaddress}/{netmask_bits}'],
-        }}}
+        'network': {
+            'version': 2,
+            'ethernets': {'any': {
+                'match': {'name': 'en*'},
+                'addresses': [f'{ipaddress}/{netmask_bits}'],
+            }}
+        }
     }
 
 
@@ -117,6 +122,14 @@ def bucketize(directives):
     return bucket
 
 
+def validate_yaml(tree):
+    with open('autoinstall-schema.json', 'r') as fp:
+        schema_data = fp.read()
+        schema = json.loads(schema_data)
+
+    jsonschema.validate(tree, schema)
+
+
 def implied_directives():
     return [Directive({'version': 1}, None, ConversionType.Implied)]
 
@@ -139,6 +152,8 @@ def convert_file(preseed_file, debug=False):
     buckets = bucketize(directives)
     coalesced = buckets.coalesce()
     result_dict = merge(coalesced)
+
+    validate_yaml(result_dict)
 
     result = yaml.dump(result_dict, default_flow_style=False)
 

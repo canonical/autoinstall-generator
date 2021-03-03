@@ -13,7 +13,7 @@ clean:
 
 distclean: clean
 	-find . -type d -name __pycache__ | xargs rm -fr
-	rm -fr .tox .coverage .pytest_cache
+	rm -fr .tox .coverage .pytest_cache *.snap
 
 build:
 	python3 setup.py bdist_wheel
