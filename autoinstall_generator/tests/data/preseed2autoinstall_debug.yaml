@@ -41,6 +41,7 @@ version: 1
 #                         gateway4: 192.168.1.1
 #                         match:
 #                           name: en*
+#                     version: 2
 #  55:   Directive: d-i netcfg/get_nameservers string 192.168.1.1
 #        Mapped to: network:
 #                     ethernets:
@@ -50,6 +51,7 @@ version: 1
 #                         nameservers:
 #                           addresses:
 #                           - 192.168.1.1
+#                     version: 2
 #  56:       Error: d-i netcfg/confirm_static boolean true
 #  68:       Error: d-i netcfg/get_hostname string unassigned-hostname
 #  69:       Error: d-i netcfg/get_domain string unassigned-domain

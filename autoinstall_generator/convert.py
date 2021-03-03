@@ -201,11 +201,11 @@ preseed_map = {
     'passwd/username': {'identity': {'username': None}},
     'passwd/user-password-crypted': {'identity': {'password': None}},
     'netcfg/hostname': {'identity': {'hostname': None}},
-    'netcfg/get_gateway': {'network': {'ethernets': {'any': {
+    'netcfg/get_gateway': {'network': {'version': 2, 'ethernets': {'any': {
         'match': {'name': 'en*'},
         'gateway4': None,
     }}}},
-    'netcfg/get_nameservers': {'network': {'ethernets': {'any': {
+    'netcfg/get_nameservers': {'network': {'version': 2, 'ethernets': {'any': {
         'match': {'name': 'en*'},
         'nameservers': {'addresses': []},
     }}}},

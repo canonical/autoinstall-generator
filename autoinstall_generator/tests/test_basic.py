@@ -134,9 +134,13 @@ def test_netmask_bits():
 def test_di_gateway():
     value = '192.168.1.1'
     one_to_one(f'd-i netcfg/get_gateway string {value}',
-               {'network': {'ethernets': {'any': {
-                'match': {'name': 'en*'},
-                'gateway4': value}}}})
+               {'network': {
+                   'version': 2,
+                   'ethernets': {'any': {
+                       'match': {'name': 'en*'},
+                       'gateway4': value}
+                   }
+               }})
 
 
 def test_di_address_netmask():
