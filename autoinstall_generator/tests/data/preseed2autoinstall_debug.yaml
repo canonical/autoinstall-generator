@@ -17,6 +17,7 @@ network:
       nameservers:
         addresses:
         - 192.168.1.1
+  version: 2
 storage:
   layout:
     name: lvm
@@ -90,6 +91,7 @@ version: 1
 #                         - 192.168.1.42/24
 #                         match:
 #                           name: en*
+#                     version: 2
 #  99:   Directive: d-i mirror/http/hostname string http.us.debian.org
 # 100:         And: d-i mirror/http/directory string /debian
 #        Mapped to: apt:

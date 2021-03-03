@@ -14,7 +14,7 @@ parts:
     python-version: python3
     source: .
     # source: https://github.com/canonical/autoinstall-generator.git
-    requirements: [requirements.txt]
+    # requirements: [requirements.txt]
     organize:
       'bin/autoinstall-generator.py': usr/bin/autoinstall-generator
     build-packages:
@@ -22,8 +22,9 @@ parts:
       - python3-setuptools
       - python3-wheel
     stage-packages:
-      - python3-yaml
       - python3.6-minimal
+      - python3-jsonschema
+      - python3-yaml
 
   # More info: https://forum.snapcraft.io/t/reducing-the-size-of-desktop-snaps/17280#heading--cleanup-part
   # Temporarily disabled - if this is allowed to run, the resulting snap is

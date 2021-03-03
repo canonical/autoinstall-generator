@@ -53,10 +53,13 @@ def netcfg(parent_directive):
     netmask_bits = parent_directive.fragments['netcfg']['netmask_bits']
     ipaddress = parent_directive.fragments['netcfg']['ipaddress']
     parent_directive.tree = {
-        'network': {'ethernets': {'any': {
-            'match': {'name': 'en*'},
-            'addresses': [f'{ipaddress}/{netmask_bits}'],
-        }}}
+        'network': {
+            'version': 2,
+            'ethernets': {'any': {
+                'match': {'name': 'en*'},
+                'addresses': [f'{ipaddress}/{netmask_bits}'],
+            }}
+        }
     }
 
 

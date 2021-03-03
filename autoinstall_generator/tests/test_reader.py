@@ -1,7 +1,10 @@
 
 from autoinstall_generator.convert import convert, ConversionType, Directive
 from autoinstall_generator.merging import convert_file
+import json
+import jsonschema
 import pytest
+import yaml
 
 
 @pytest.fixture(autouse=True)
@@ -40,6 +43,17 @@ def test_convert_file():
     with open(autoinstall_path, 'r') as autoinstall:
         expected = autoinstall.read()
     assert expected == actual
+
+
+def test_validate():
+    with open(autoinstall_path, 'r') as fp:
+        ai = yaml.safe_load(fp.read())
+
+    with open('autoinstall-schema.json', 'r') as fp:
+        schema_data = fp.read()
+        schema = json.loads(schema_data)
+
+    jsonschema.validate(ai, schema)
 
 
 def test_convert_simple_debug():

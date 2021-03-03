@@ -2,7 +2,6 @@
 from autoinstall_generator.convert import (convert, Directive, ConversionType,
                                            netmask_bits, insert_at_none)
 from autoinstall_generator.merging import merge, bucketize
-# import pytest
 
 
 def full_flow(start, expected, convert_type):
@@ -144,10 +143,13 @@ def test_di_address_netmask():
     address = '192.168.1.42'
     mask = '255.255.255.0'
     mask_bits = '24'
-    expected = {'network': {'ethernets': {'any': {
-        'match': {'name': 'en*'},
-        'addresses': [f'{address}/{mask_bits}'],
-    }}}}
+    expected = {'network': {
+        'version': 2,
+        'ethernets': {'any': {
+            'match': {'name': 'en*'},
+            'addresses': [f'{address}/{mask_bits}'],
+        }}}
+    }
     dependent([f'd-i netcfg/get_ipaddress string {address}',
                f'd-i netcfg/get_netmask string {mask}'],
               expected)
