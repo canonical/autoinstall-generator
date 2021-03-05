@@ -433,3 +433,4 @@ d-i finish-install/reboot_in_progress note
 # packages and run commands in the target system.
 #d-i preseed/late_command string apt-install zsh; in-target chsh -s /bin/zsh
 
+d-i apt-setup/cdrom/set-first boolean false

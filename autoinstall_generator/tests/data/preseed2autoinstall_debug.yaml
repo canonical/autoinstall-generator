@@ -3,6 +3,7 @@ apt:
   - arches:
     - default
     uri: http://http.us.debian.org/debian
+debconf-selections: apt-setup/cdrom/set-first boolean false
 keyboard:
   layout: us
 locale: en_GB.UTF-8
@@ -84,6 +85,8 @@ version: 1
 # 353: Unsupported: d-i grub-installer/only_debian boolean true
 # 357: Unsupported: d-i grub-installer/with_other_os boolean true
 # 391: Unsupported: d-i finish-install/reboot_in_progress note
+# 436:   Directive: d-i apt-setup/cdrom/set-first boolean false
+#        Mapped to: debconf-selections: apt-setup/cdrom/set-first boolean false
 #  52:   Directive: d-i netcfg/get_ipaddress string 192.168.1.42
 #  53:         And: d-i netcfg/get_netmask string 255.255.255.0
 #        Mapped to: network:

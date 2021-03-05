@@ -249,11 +249,9 @@ def dispatch(line, key, value, linenumber):
                 return Directive({}, line, ConversionType.Unsupported,
                                  linenumber)
 
-    convert_type = ConversionType.OneToOne
-    if len(output) < 1:
-        convert_type = ConversionType.UnknownError
-        output = {}
+        output = {'debconf-selections': ' '.join(line.split(' ')[1:])}
 
+    convert_type = ConversionType.OneToOne
     return Directive(output, line, convert_type, linenumber)
 
 

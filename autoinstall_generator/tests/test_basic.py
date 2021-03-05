@@ -84,11 +84,9 @@ def test_di_keymap():
                    {'keyboard': {'layout': keymap}})
 
 
-def test_di_invalid():
-    line = 'd-i stuff/things string asdf'
-    directive = convert(line)
-    assert {} == directive.tree
-    assert ConversionType.UnknownError == directive.convert_type
+def test_di_debconf_selections():
+    rest = 'stuff/things string asdf'
+    one_to_one(f'd-i {rest}', {'debconf-selections': rest})
 
 
 def test_di_user_fullname():
