@@ -189,11 +189,9 @@ def partman_method(value, line, lineno):
     return Directive(output, line, ConversionType.OneToOne, lineno)
 
 
-# Directive(output, line, convert_type, linenumber)
 # Translation table to map from preseed values to autoinstall ones.
 # key: d-i style directive key
-# value: dictionary for simple mapping, function for more exciting one,
-#        None if unsupported
+# value: dictionary for simple mapping, function for more exciting one
 preseed_map = {
     'keyboard-configuration/xkb-keymap': {'keyboard': {'layout': None}},
     'debian-installer/locale': {'locale': None},
@@ -214,25 +212,42 @@ preseed_map = {
     'mirror/http/hostname': mirror_http_hostname,
     'mirror/http/directory': mirror_http_directory,
     'partman-auto/method': partman_method,
-    'localechooser/supported-locales': None,
-    'debian-installer/language': None,
-    'debian-installer/country': None,
-    'keyboard-configuration/toggle': None,
-    'partman-auto/disk': None,
 }
+
+
+# d-i directives that start with these are presumed intended for the
+# installer, not the target system.
+installer_directives = [
+    'clock-setup',
+    'debian-installer',
+    'grub-installer',
+    'finish-install',
+    'keyboard-configuration',
+    'localechooser',
+    'mirror',
+    'netcfg',
+    'partman',
+    'passwd',
+    'time',
+]
 
 
 def dispatch(line, key, value, linenumber):
     output = {}
 
     if key in preseed_map:
+        # do we know how to convert this item?
         mapped_key = preseed_map[key]
-        if not mapped_key:
-            return Directive({}, line, ConversionType.Unsupported, linenumber)
-        elif callable(mapped_key):
+        if callable(mapped_key):
             return mapped_key(value, line, linenumber)
         else:
             output = insert_at_none(copy.deepcopy(mapped_key), value)
+    else:
+        # is this an installer item we don't support?
+        for prefix in installer_directives:
+            if key.startswith(prefix):
+                return Directive({}, line, ConversionType.Unsupported,
+                                 linenumber)
 
     convert_type = ConversionType.OneToOne
     if len(output) < 1:
