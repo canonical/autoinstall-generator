@@ -22,8 +22,7 @@ probably not yet correct.
       -h, --help   show this help message and exit
       -d, --debug  include commented out debug output explaining the conversions
                    performed
-      -c, --cloud  output in cloud-config format, which just means that all
-                   directives show under a toplevel "autoinstall:"
+      -c, --cloud  output in cloud-config format
 
 ## Feedback
 

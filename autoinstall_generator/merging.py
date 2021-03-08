@@ -191,10 +191,12 @@ def convert_file(preseed_file, args):
 
     validate_yaml(result_dict)
 
+    result = ''
     if args.cloud:
         result_dict = {'autoinstall': result_dict}
+        result = '#cloud-config\n'
 
-    result = dump_yaml(result_dict)
+    result += dump_yaml(result_dict)
 
     if args.debug:
         result += debug_output(coalesced)

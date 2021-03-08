@@ -99,6 +99,7 @@ def test_convert_simple_cloud():
     with open(simple_path, 'r') as simple:
         actual = convert_file(simple, args)
     expected = '''\
+#cloud-config
 autoinstall:
   locale: en_US
   version: 1

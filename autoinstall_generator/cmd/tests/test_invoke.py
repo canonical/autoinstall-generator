@@ -97,6 +97,7 @@ def test_simple_cloud_config():
         process = run([cmd, simple_path, arg])
         assert 0 == process.returncode
         expected = '''\
+#cloud-config
 autoinstall:
   locale: en_US
   version: 1

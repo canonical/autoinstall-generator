@@ -11,8 +11,7 @@ helptext = {
     'outfile': 'Subiquity autoinstall yaml',
     'debug': 'include commented out debug output explaining the conversions'
               + ' performed',
-    'cloud': 'output in cloud-config format, which just means that'
-              + ' all directives show under a toplevel "autoinstall:"',
+    'cloud': 'output in cloud-config format',
 }
 
 
