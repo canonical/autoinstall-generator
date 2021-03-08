@@ -1,6 +1,8 @@
 
 # Preseed to Autoinstall
 
+[![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/autoinstall-generator)
+
 Objective: Ingest Debian preseed format file(s), and provide compatible
 Subiquity autoinstall in response.
 
