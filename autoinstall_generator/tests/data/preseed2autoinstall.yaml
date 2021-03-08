@@ -3,7 +3,9 @@ apt:
   - arches:
     - default
     uri: http://http.us.debian.org/debian
-debconf-selections: apt-setup/cdrom/set-first boolean false
+debconf-selections: |
+  apt-setup/cdrom/set-first boolean false
+  apt-setup/cdrom/set-second boolean true
 keyboard:
   layout: us
 locale: en_GB.UTF-8

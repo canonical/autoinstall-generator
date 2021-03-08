@@ -3,7 +3,9 @@ apt:
   - arches:
     - default
     uri: http://http.us.debian.org/debian
-debconf-selections: apt-setup/cdrom/set-first boolean false
+debconf-selections: |
+  apt-setup/cdrom/set-first boolean false
+  apt-setup/cdrom/set-second boolean true
 keyboard:
   layout: us
 locale: en_GB.UTF-8
@@ -35,6 +37,16 @@ version: 1
 #                     layout: us
 #  15: Unsupported: d-i keyboard-configuration/toggle select No toggling
 #  25: Unsupported: d-i netcfg/choose_interface select auto
+#  52:   Directive: d-i netcfg/get_ipaddress string 192.168.1.42
+#  53:         And: d-i netcfg/get_netmask string 255.255.255.0
+#        Mapped to: network:
+#                     ethernets:
+#                       any:
+#                         addresses:
+#                         - 192.168.1.42/24
+#                         match:
+#                           name: en*
+#                     version: 2
 #  54:   Directive: d-i netcfg/get_gateway string 192.168.1.1
 #        Mapped to: network:
 #                     ethernets:
@@ -58,6 +70,13 @@ version: 1
 #  69: Unsupported: d-i netcfg/get_domain string unassigned-domain
 #  77: Unsupported: d-i netcfg/wireless_wep string
 #  98: Unsupported: d-i mirror/country string manual
+#  99:   Directive: d-i mirror/http/hostname string http.us.debian.org
+# 100:         And: d-i mirror/http/directory string /debian
+#        Mapped to: apt:
+#                     primary:
+#                     - arches:
+#                       - default
+#                       uri: http://http.us.debian.org/debian
 # 101: Unsupported: d-i mirror/http/proxy string
 # 138: Unsupported: d-i clock-setup/utc boolean true
 # 142: Unsupported: d-i time/zone string US/Eastern
@@ -86,21 +105,7 @@ version: 1
 # 357: Unsupported: d-i grub-installer/with_other_os boolean true
 # 391: Unsupported: d-i finish-install/reboot_in_progress note
 # 436:   Directive: d-i apt-setup/cdrom/set-first boolean false
-#        Mapped to: debconf-selections: apt-setup/cdrom/set-first boolean false
-#  52:   Directive: d-i netcfg/get_ipaddress string 192.168.1.42
-#  53:         And: d-i netcfg/get_netmask string 255.255.255.0
-#        Mapped to: network:
-#                     ethernets:
-#                       any:
-#                         addresses:
-#                         - 192.168.1.42/24
-#                         match:
-#                           name: en*
-#                     version: 2
-#  99:   Directive: d-i mirror/http/hostname string http.us.debian.org
-# 100:         And: d-i mirror/http/directory string /debian
-#        Mapped to: apt:
-#                     primary:
-#                     - arches:
-#                       - default
-#                       uri: http://http.us.debian.org/debian
+# 437:         And: d-i apt-setup/cdrom/set-second boolean true
+#        Mapped to: debconf-selections: |
+#                     apt-setup/cdrom/set-first boolean false
+#                     apt-setup/cdrom/set-second boolean true

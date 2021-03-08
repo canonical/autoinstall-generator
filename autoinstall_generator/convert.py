@@ -158,6 +158,13 @@ def fragment(frag, line, lineno):
     return directive
 
 
+def debconf_fragment(value, line, lineno):
+    chunks = line.split(' ')
+    key = chunks[1]
+    partial = ' '.join(chunks[1:])
+    return fragment({'debconf-selections': {key: partial}}, line, lineno)
+
+
 def netmask(value, line, lineno):
     bits = netmask_bits(value)
     return fragment({'netcfg': {'netmask_bits': bits}}, line, lineno)
@@ -242,6 +249,8 @@ def dispatch(line, key, value, linenumber):
             return mapped_key(value, line, linenumber)
         else:
             output = insert_at_none(copy.deepcopy(mapped_key), value)
+            convert_type = ConversionType.OneToOne
+            return Directive(output, line, convert_type, linenumber)
     else:
         # is this an installer item we don't support?
         for prefix in installer_directives:
@@ -249,10 +258,7 @@ def dispatch(line, key, value, linenumber):
                 return Directive({}, line, ConversionType.Unsupported,
                                  linenumber)
 
-        output = {'debconf-selections': ' '.join(line.split(' ')[1:])}
-
-    convert_type = ConversionType.OneToOne
-    return Directive(output, line, convert_type, linenumber)
+        return debconf_fragment(value, line, linenumber)
 
 
 def convert(line, linenumber=None):
