@@ -162,16 +162,16 @@ def debug_output(directives):
 
 def str_presenter(dumper, data):
     '''https://github.com/yaml/pyyaml/issues/240'''
-    def rep(**kwargs):
-        return dumper.represent_scalar('tag:yaml.org,2002:str', data, **kwargs)
+    def rep(value, **kwargs):
+        return dumper.represent_scalar('tag:yaml.org,2002:str', value, **kwargs)
 
     try:
         dlen = len(data.splitlines())
         if (dlen > 1):
-            return rep(style='|')
+            return rep(data, style='|')
     except TypeError:
         pass
-    return rep()
+    return rep(data.strip())
 
 
 def dump_yaml(tree):

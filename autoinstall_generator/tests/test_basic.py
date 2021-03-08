@@ -319,7 +319,21 @@ def test_di_multiple_debconf_selections():
     assert expected == actual
 
 
-def test_dump_yaml():
+def test_dump_yaml_single():
+    tree = {'a': 'b'}
+    actual = dump_yaml(tree)
+    expected = 'a: b\n'
+    assert expected == actual
+
+
+def test_dump_yaml_single_line():
+    tree = {'a': 'b\n'}
+    actual = dump_yaml(tree)
+    expected = 'a: b\n'
+    assert expected == actual
+
+
+def test_dump_yaml_multiline():
     tree = {'a': 'b\nc\nd\n'}
     actual = dump_yaml(tree)
     expected = '''\
