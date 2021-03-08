@@ -1,7 +1,7 @@
 
 from autoinstall_generator.convert import (convert, Directive, ConversionType,
                                            netmask_bits, insert_at_none)
-from autoinstall_generator.merging import merge, bucketize
+from autoinstall_generator.merging import merge, bucketize, dump_yaml
 
 
 def full_flow(start, expected, convert_type):
@@ -84,11 +84,9 @@ def test_di_keymap():
                    {'keyboard': {'layout': keymap}})
 
 
-def test_di_invalid():
-    line = 'd-i stuff/things string asdf'
-    directive = convert(line)
-    assert {} == directive.tree
-    assert ConversionType.UnknownError == directive.convert_type
+def test_di_debconf_selections():
+    rest = 'stuff/things string asdf'
+    dependent(f'd-i {rest}', {'debconf-selections': rest + '\n'})
 
 
 def test_di_user_fullname():
@@ -305,3 +303,43 @@ def test_debug_error():
     error = Directive({}, 'oiqwueriower', ConversionType.UnknownError, 6)
     expected = '# 6:       Error: oiqwueriower\n'
     assert expected == error.debug_directive()[0]
+
+
+def test_di_multiple_debconf_selections():
+    selections = [
+        'stuff/things string asdf',
+        'a/b boolean false',
+    ]
+    directives = [convert('d-i ' + sel) for sel in selections]
+    joined = '\n'.join(selections) + '\n'
+    buckets = bucketize(directives)
+    coalesced = buckets.coalesce()
+    actual = merge(coalesced)
+    expected = {'debconf-selections': joined}
+    assert expected == actual
+
+
+def test_dump_yaml_single():
+    tree = {'a': 'b'}
+    actual = dump_yaml(tree)
+    expected = 'a: b\n'
+    assert expected == actual
+
+
+def test_dump_yaml_single_line():
+    tree = {'a': 'b\n'}
+    actual = dump_yaml(tree)
+    expected = 'a: b\n'
+    assert expected == actual
+
+
+def test_dump_yaml_multiline():
+    tree = {'a': 'b\nc\nd\n'}
+    actual = dump_yaml(tree)
+    expected = '''\
+a: |
+  b
+  c
+  d
+'''
+    assert expected == actual

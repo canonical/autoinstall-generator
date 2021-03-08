@@ -65,9 +65,17 @@ def netcfg(parent_directive):
     }
 
 
+def debconf_selections(parent_directive):
+    fragments = parent_directive.fragments['debconf-selections']
+    values = [fragments[key] for key in fragments]
+    value = '\n'.join(values) + '\n'
+    parent_directive.tree = {'debconf-selections': value}
+
+
 coalesce_map = {
     'mirror/http': mirror_http,
     'netcfg': netcfg,
+    'debconf-selections': debconf_selections,
 }
 
 
@@ -80,6 +88,8 @@ def coalesce(directives):
     result.fragments = {}
     for d in directives:
         result.fragments = do_merge(result.fragments, d.fragments)
+        if result.linenumber is None:
+            result.linenumber = d.linenumber
 
     key = list(result.fragments)[0]
     coalesce_map[key](result)
@@ -93,10 +103,17 @@ class Bucket:
         self.dependent = {}
 
     def coalesce(self):
+        def keyfn(d):
+            if d.linenumber is None:
+                return -1
+            return d.linenumber
+
         result = copy.copy(self.independent)
         for key in self.dependent:
             cur = self.dependent[key]
             result.append(coalesce(cur))
+
+        list.sort(result, key=keyfn)
         return result
 
 
@@ -143,6 +160,25 @@ def debug_output(directives):
     return ''.join(trailer)
 
 
+def str_presenter(dumper, data):
+    '''https://github.com/yaml/pyyaml/issues/240'''
+    def rep(val, **kwargs):
+        return dumper.represent_scalar('tag:yaml.org,2002:str', val, **kwargs)
+
+    try:
+        dlen = len(data.splitlines())
+        if (dlen > 1):
+            return rep(data, style='|')
+    except TypeError:
+        pass
+    return rep(data.strip())
+
+
+def dump_yaml(tree):
+    yaml.add_representer(str, str_presenter)
+    return yaml.dump(tree, default_flow_style=False)
+
+
 def convert_file(preseed_file, debug=False):
     directives = implied_directives()
 
@@ -155,7 +191,7 @@ def convert_file(preseed_file, debug=False):
 
     validate_yaml(result_dict)
 
-    result = yaml.dump(result_dict, default_flow_style=False)
+    result = dump_yaml(result_dict)
 
     if debug:
         result += debug_output(coalesced)
