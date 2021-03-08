@@ -162,8 +162,8 @@ def debug_output(directives):
 
 def str_presenter(dumper, data):
     '''https://github.com/yaml/pyyaml/issues/240'''
-    def rep(value, **kwargs):
-        return dumper.represent_scalar('tag:yaml.org,2002:str', value, **kwargs)
+    def rep(val, **kwargs):
+        return dumper.represent_scalar('tag:yaml.org,2002:str', val, **kwargs)
 
     try:
         dlen = len(data.splitlines())
