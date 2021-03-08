@@ -90,3 +90,15 @@ version: 1
 #      Mapped to: locale: en_US
 '''
     assert expected == str(process.stdout)
+
+
+def test_simple_cloud_config():
+    for arg in ['-c', '--cloud']:
+        process = run([cmd, simple_path, arg])
+        assert 0 == process.returncode
+        expected = '''\
+autoinstall:
+  locale: en_US
+  version: 1
+'''
+        assert expected == str(process.stdout)

@@ -179,7 +179,7 @@ def dump_yaml(tree):
     return yaml.dump(tree, default_flow_style=False)
 
 
-def convert_file(preseed_file, debug=False):
+def convert_file(preseed_file, args):
     directives = implied_directives()
 
     for idx, line in enumerate(preseed_file.readlines()):
@@ -191,9 +191,12 @@ def convert_file(preseed_file, debug=False):
 
     validate_yaml(result_dict)
 
+    if args.cloud:
+        result_dict = {'autoinstall': result_dict}
+
     result = dump_yaml(result_dict)
 
-    if debug:
+    if args.debug:
         result += debug_output(coalesced)
 
     return result

@@ -12,6 +12,11 @@ def reset_largest_lineno():
     Directive.largest_linenumber = 0
 
 
+class MockArgs:
+    debug = False
+    cloud = False
+
+
 expected_lines = '''\
 d-i debian-installer/locale string en_US
 d-i debian-installer/language string en
@@ -38,8 +43,9 @@ def test_reader():
 
 
 def test_convert_file():
+    args = MockArgs()
     with open(preseed_path, 'r') as preseed:
-        actual = convert_file(preseed)
+        actual = convert_file(preseed, args)
     with open(autoinstall_path, 'r') as autoinstall:
         expected = autoinstall.read()
     assert expected == actual
@@ -74,12 +80,27 @@ def test_validate():
 
 
 def test_convert_simple_debug():
+    args = MockArgs()
+    args.debug = True
     with open(simple_path, 'r') as simple:
-        actual = convert_file(simple, True)
+        actual = convert_file(simple, args)
     expected = '''\
 locale: en_US
 version: 1
 # 1:   Directive: d-i debian-installer/locale string en_US
 #      Mapped to: locale: en_US
+'''
+    assert expected == actual
+
+
+def test_convert_simple_cloud():
+    args = MockArgs()
+    args.cloud = True
+    with open(simple_path, 'r') as simple:
+        actual = convert_file(simple, args)
+    expected = '''\
+autoinstall:
+  locale: en_US
+  version: 1
 '''
     assert expected == actual

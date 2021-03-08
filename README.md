@@ -11,7 +11,8 @@ but there is room for improvement.  Not yet very well tested.  Netplan output
 probably not yet correct.
 
 ## Usage
-    usage: autoinstall-generator.py [-h] [-d] infile [outfile]
+
+    usage: autoinstall-generator.py [-h] [-d] [-c] infile [outfile]
 
     positional arguments:
       infile       Debian install preseed file, or a dash to read stdin
@@ -21,6 +22,8 @@ probably not yet correct.
       -h, --help   show this help message and exit
       -d, --debug  include commented out debug output explaining the conversions
                    performed
+      -c, --cloud  output in cloud-config format, which just means that all
+                   directives show under a toplevel "autoinstall:"
 
 ## Feedback
 
