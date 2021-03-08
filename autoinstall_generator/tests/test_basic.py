@@ -343,5 +343,3 @@ a: |
   d
 '''
     assert expected == actual
-
-    # FIXME dump of non-multi-line string to yaml
