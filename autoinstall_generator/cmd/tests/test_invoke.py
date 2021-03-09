@@ -103,3 +103,9 @@ autoinstall:
   version: 1
 '''
         assert expected == str(process.stdout)
+
+
+def test_version():
+    process = run([cmd, '--version'])
+    assert 0 == process.returncode
+    assert str(process.stdout).startswith('Version: ')
