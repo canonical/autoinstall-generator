@@ -54,3 +54,5 @@ parts:
 apps:
   autoinstall-generator:
     command: usr/bin/autoinstall-generator
+    plugs:
+      - home
