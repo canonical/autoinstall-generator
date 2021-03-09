@@ -34,7 +34,10 @@ snap-clean:
 	snapcraft clean --use-lxd autoinstall-generator metadata
 
 snap-install:
-	sudo snap install *.snap --dangerous --devmode
+	sudo snap install *.snap --dangerous
+
+snap-uninstall:
+	sudo snap remove autoinstall-generator
 
 html:
 	markdown README.md > README.html
