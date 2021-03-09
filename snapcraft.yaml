@@ -1,5 +1,4 @@
 name: autoinstall-generator
-version: '0.0.1'
 summary: Utility to convert Debian Installer preseed to Subiquity answers
 description: |
   Ingest Debian preseed format file(s), and provide compatible Subiquity
@@ -7,8 +6,18 @@ description: |
 confinement: strict
 base: core18
 grade: stable
+adopt-info: metadata
 
 parts:
+  metadata:
+    plugin: dump
+    source: .
+    # source: https://github.com/canonical/autoinstall-generator.git
+    override-pull: |
+      cat "$SNAPCRAFT_PROJECT_DIR/autoinstall_generator/version.py" | \
+        awk '{print $3}' | \
+        xargs snapcraftctl set-version
+
   autoinstall-generator:
     plugin: python
     python-version: python3

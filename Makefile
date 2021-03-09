@@ -28,10 +28,10 @@ check:
 	tox
 
 snap:
-	snapcraft snap --debug
+	snapcraft snap --use-lxd --debug
 
 snap-clean:
-	snapcraft clean autoinstall-generator
+	snapcraft clean --use-lxd autoinstall-generator metadata
 
 snap-install:
 	sudo snap install *.snap --dangerous --devmode

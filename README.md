@@ -1,5 +1,5 @@
 
-# Preseed to Autoinstall
+# autoinstall-generator
 
 [![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/autoinstall-generator)
 
@@ -12,17 +12,18 @@ probably not yet correct.
 
 ## Usage
 
-    usage: autoinstall-generator.py [-h] [-d] [-c] infile [outfile]
+    usage: autoinstall-generator.py [-h] [-c] [-d] [-V] infile [outfile]
 
     positional arguments:
-      infile       Debian install preseed file, or a dash to read stdin
-      outfile      Subiquity autoinstall yaml
+      infile         Debian install preseed file, or a dash to read stdin
+      outfile        Subiquity autoinstall yaml
 
     optional arguments:
-      -h, --help   show this help message and exit
-      -d, --debug  include commented out debug output explaining the conversions
-                   performed
-      -c, --cloud  output in cloud-config format
+      -h, --help     show this help message and exit
+      -c, --cloud    output in cloud-config format
+      -d, --debug    include commented out debug output explaining the conversions
+                     performed
+      -V, --version  show version and exit
 
 ## Feedback
 
