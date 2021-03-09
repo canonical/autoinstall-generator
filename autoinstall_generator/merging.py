@@ -140,7 +140,7 @@ def bucketize(directives):
 
 
 def validate_yaml(tree):
-    with open('autoinstall-schema.json', 'r') as fp:
+    with open('autoinstall_generator/autoinstall-schema.json', 'r') as fp:
         schema_data = fp.read()
         schema = json.loads(schema_data)
 
