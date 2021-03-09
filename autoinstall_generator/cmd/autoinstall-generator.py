@@ -11,6 +11,7 @@ helptext = {
     'outfile': 'Subiquity autoinstall yaml',
     'debug': 'include commented out debug output explaining the conversions'
               + ' performed',
+    'cloud': 'output in cloud-config format',
 }
 
 
@@ -26,6 +27,7 @@ def main():
     add(parser, 'inpath', metavar='infile')
     add(parser, 'outfile', nargs='?', type=FileType('w'), default=sys.stdout)
     add(parser, 'debug', '-d', '--debug', action='store_true')
+    add(parser, 'cloud', '-c', '--cloud', action='store_true')
     args = parser.parse_args()
 
     infile = None
@@ -37,7 +39,7 @@ def main():
         infile_needs_close = True
         infile = open(args.inpath, 'r')
 
-    out = convert_file(infile, args.debug)
+    out = convert_file(infile, args)
     args.outfile.write(out)
     if infile_needs_close and infile:
         infile.close()
