@@ -3,6 +3,7 @@ from autoinstall_generator.convert import convert, Directive, ConversionType
 import copy
 import json
 import jsonschema
+import pkg_resources
 import yaml
 
 
@@ -140,7 +141,11 @@ def bucketize(directives):
 
 
 def validate_yaml(tree):
-    with open('autoinstall-schema.json', 'r') as fp:
+    pkg = 'autoinstall_generator'
+    schema_file = 'autoinstall-schema.json'
+    schema_path = pkg_resources.resource_filename(pkg, schema_file)
+
+    with open(schema_path, 'r') as fp:
         schema_data = fp.read()
         schema = json.loads(schema_data)
 

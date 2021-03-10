@@ -72,7 +72,7 @@ def test_validate():
     with open(autoinstall_path, 'r') as fp:
         ai = yaml.safe_load(fp.read())
 
-    with open('autoinstall-schema.json', 'r') as fp:
+    with open('autoinstall_generator/autoinstall-schema.json', 'r') as fp:
         schema_data = fp.read()
         schema = json.loads(schema_data)
 

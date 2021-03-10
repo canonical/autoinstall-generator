@@ -27,6 +27,9 @@ test:
 check:
 	tox
 
+integration:
+	scripts/integration-test.sh
+
 snap:
 	snapcraft snap --use-lxd --debug
 
