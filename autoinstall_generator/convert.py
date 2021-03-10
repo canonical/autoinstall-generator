@@ -160,10 +160,8 @@ def fragment(frag, line, lineno):
 
 def debconf_fragment(value, line, lineno):
     chunks = line.split(' ')
-    key = chunks[1]
-    package = key.split('/')[0]
-    partial = ' '.join([package] + chunks[1:])
-    return fragment({'debconf-selections': {key: partial}}, line, lineno)
+    key = f'{chunks[0]} {chunks[1]}'
+    return fragment({'debconf-selections': {key: line}}, line, lineno)
 
 
 def netmask(value, line, lineno):
@@ -285,14 +283,18 @@ def convert(line, linenumber=None):
 
     trimmed = line.strip()
     tokens = trimmed.split(' ')
-    if tokens[0] != 'd-i':
+    if tokens[0].startswith('#') or not tokens[0]:
         return Directive({}, line, ConversionType.PassThru, linenumber)
 
     value = ''
     if len(tokens) > 3:
         value = ' '.join(tokens[3:])
 
-    return dispatch(line, tokens[1], value, linenumber)
+    key = ''
+    if len(tokens) > 1:
+        key = tokens[1]
+
+    return dispatch(line, key, value, linenumber)
 
 
 def insert_at_none(tree, value):

@@ -4,8 +4,8 @@ apt:
     - default
     uri: http://http.us.debian.org/debian
 debconf-selections: |
-  apt-setup apt-setup/cdrom/set-first boolean false
-  apt-setup apt-setup/cdrom/set-second boolean true
+  pkg-a pkg-a/my-q boolean false
+  pkg-b pkg-a/my-other-q boolean true
 keyboard:
   layout: us
 locale: en_GB.UTF-8
@@ -92,8 +92,8 @@ version: 1
 # 353: Unsupported: d-i grub-installer/only_debian boolean true
 # 357: Unsupported: d-i grub-installer/with_other_os boolean true
 # 391: Unsupported: d-i finish-install/reboot_in_progress note
-# 436:   Directive: d-i apt-setup/cdrom/set-first boolean false
-# 437:         And: d-i apt-setup/cdrom/set-second boolean true
+# 436:   Directive: pkg-a pkg-a/my-q boolean false
+# 437:         And: pkg-b pkg-a/my-other-q boolean true
 #        Mapped to: debconf-selections: |
-#                     apt-setup apt-setup/cdrom/set-first boolean false
-#                     apt-setup apt-setup/cdrom/set-second boolean true
+#                     pkg-a pkg-a/my-q boolean false
+#                     pkg-b pkg-a/my-other-q boolean true

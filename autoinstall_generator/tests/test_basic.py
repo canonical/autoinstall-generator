@@ -85,8 +85,8 @@ def test_di_keymap():
 
 
 def test_di_debconf_selections():
-    rest = 'stuff/things string asdf'
-    dependent(f'd-i {rest}', {'debconf-selections': f'stuff {rest}\n'})
+    line = 'stuff stuff/things string asdf'
+    dependent(line, {'debconf-selections': f'{line}\n'})
 
 
 def test_di_user_fullname():
@@ -307,16 +307,16 @@ def test_debug_error():
 
 def test_di_multiple_debconf_selections():
     selections = [
-        'stuff/things string asdf',
-        'a/b boolean false',
+        'stuff stuff/things string asdf',
+        'stuff a/b boolean false',
     ]
-    directives = [convert('d-i ' + sel) for sel in selections]
+    directives = [convert(sel) for sel in selections]
     buckets = bucketize(directives)
     coalesced = buckets.coalesce()
     actual = merge(coalesced)
     expected_vals = '''\
 stuff stuff/things string asdf
-a a/b boolean false
+stuff a/b boolean false
 '''
     expected = {'debconf-selections': expected_vals}
     assert expected == actual
