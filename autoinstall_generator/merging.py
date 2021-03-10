@@ -53,17 +53,32 @@ def mirror_http(parent_directive):
 
 
 def netcfg(parent_directive):
-    netmask_bits = parent_directive.fragments['netcfg']['netmask_bits']
-    ipaddress = parent_directive.fragments['netcfg']['ipaddress']
+    netcfg = parent_directive.fragments['netcfg']
+    interface = netcfg.get('interface', 'any')
     parent_directive.tree = {
         'network': {
             'version': 2,
-            'ethernets': {'any': {
-                'match': {'name': 'en*'},
-                'addresses': [f'{ipaddress}/{netmask_bits}'],
-            }}
+            'ethernets': {interface: {}}
         }
     }
+
+    iface_subtree = parent_directive.tree['network']['ethernets'][interface]
+    if interface == 'any':
+        val = {'name': 'en*'}
+        iface_subtree['match'] = val
+
+    gateway = netcfg.get('gateway', None)
+    if gateway:
+        iface_subtree['gateway4'] = gateway
+
+    ipaddress = netcfg.get('ipaddress', None)
+    netmask_bits = netcfg.get('netmask_bits', 24)
+    if ipaddress:
+        iface_subtree['addresses'] = [f'{ipaddress}/{netmask_bits}']
+
+    nameservers = netcfg.get('nameservers', None)
+    if nameservers:
+        iface_subtree['nameservers'] = {'addresses': [nameservers]}
 
 
 def debconf_selections(parent_directive):

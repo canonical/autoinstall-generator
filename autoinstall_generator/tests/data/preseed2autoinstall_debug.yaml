@@ -36,29 +36,17 @@ version: 1
 #        Mapped to: keyboard:
 #                     layout: us
 #  15: Unsupported: d-i keyboard-configuration/toggle select No toggling
-#  25: Unsupported: d-i netcfg/choose_interface select auto
-#  52:   Directive: d-i netcfg/get_ipaddress string 192.168.1.42
+#  25:   Directive: d-i netcfg/choose_interface select auto
+#  52:         And: d-i netcfg/get_ipaddress string 192.168.1.42
 #  53:         And: d-i netcfg/get_netmask string 255.255.255.0
+#  54:         And: d-i netcfg/get_gateway string 192.168.1.1
+#  55:         And: d-i netcfg/get_nameservers string 192.168.1.1
 #        Mapped to: network:
 #                     ethernets:
 #                       any:
 #                         addresses:
 #                         - 192.168.1.42/24
-#                         match:
-#                           name: en*
-#                     version: 2
-#  54:   Directive: d-i netcfg/get_gateway string 192.168.1.1
-#        Mapped to: network:
-#                     ethernets:
-#                       any:
 #                         gateway4: 192.168.1.1
-#                         match:
-#                           name: en*
-#                     version: 2
-#  55:   Directive: d-i netcfg/get_nameservers string 192.168.1.1
-#        Mapped to: network:
-#                     ethernets:
-#                       any:
 #                         match:
 #                           name: en*
 #                         nameservers:

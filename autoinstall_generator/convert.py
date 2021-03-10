@@ -174,6 +174,20 @@ def ipaddress(value, line, lineno):
     return fragment({'netcfg': {'ipaddress': value}}, line, lineno)
 
 
+def netcfg_gateway(value, line, lineno):
+    return fragment({'netcfg': {'gateway': value}}, line, lineno)
+
+
+def netcfg_interface(value, line, lineno):
+    if value == 'auto':
+        value = 'any'
+    return fragment({'netcfg': {'interface': value}}, line, lineno)
+
+
+def netcfg_nameservers(value, line, lineno):
+    return fragment({'netcfg': {'nameservers': value}}, line, lineno)
+
+
 def mirror_http_hostname(value, line, lineno):
     return fragment({'mirror/http': {'hostname': value}}, line, lineno)
 
@@ -206,16 +220,11 @@ preseed_map = {
     'passwd/username': {'identity': {'username': None}},
     'passwd/user-password-crypted': {'identity': {'password': None}},
     'netcfg/hostname': {'identity': {'hostname': None}},
-    'netcfg/get_gateway': {'network': {'version': 2, 'ethernets': {'any': {
-        'match': {'name': 'en*'},
-        'gateway4': None,
-    }}}},
-    'netcfg/get_nameservers': {'network': {'version': 2, 'ethernets': {'any': {
-        'match': {'name': 'en*'},
-        'nameservers': {'addresses': []},
-    }}}},
     'netcfg/get_netmask': netmask,
     'netcfg/get_ipaddress': ipaddress,
+    'netcfg/get_nameservers': netcfg_nameservers,
+    'netcfg/choose_interface': netcfg_interface,
+    'netcfg/get_gateway': netcfg_gateway,
     'mirror/http/hostname': mirror_http_hostname,
     'mirror/http/directory': mirror_http_directory,
     'partman-auto/method': partman_method,
