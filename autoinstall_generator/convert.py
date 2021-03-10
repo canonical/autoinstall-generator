@@ -230,24 +230,7 @@ preseed_map = {
 }
 
 
-# d-i directives that start with these are presumed intended for the
-# installer, not the target system.
-installer_directives = [
-    'clock-setup',
-    'debian-installer',
-    'grub-installer',
-    'finish-install',
-    'keyboard-configuration',
-    'localechooser',
-    'mirror',
-    'netcfg',
-    'partman',
-    'passwd',
-    'time',
-]
-
-
-def dispatch(line, key, value, linenumber):
+def dispatch(line, pkg, key, value, linenumber):
     output = {}
 
     if key in preseed_map:
@@ -261,10 +244,9 @@ def dispatch(line, key, value, linenumber):
             return Directive(output, line, convert_type, linenumber)
     else:
         # is this an installer item we don't support?
-        for prefix in installer_directives:
-            if key.startswith(prefix):
-                return Directive({}, line, ConversionType.Unsupported,
-                                 linenumber)
+        if pkg == 'd-i':
+            return Directive({}, line, ConversionType.Unsupported,
+                             linenumber)
 
         return debconf_fragment(value, line, linenumber)
 
@@ -283,7 +265,8 @@ def convert(line, linenumber=None):
 
     trimmed = line.strip()
     tokens = trimmed.split(' ')
-    if tokens[0].startswith('#') or not tokens[0]:
+    pkg = tokens[0]
+    if pkg.startswith('#') or not pkg:
         return Directive({}, line, ConversionType.PassThru, linenumber)
 
     value = ''
@@ -294,7 +277,7 @@ def convert(line, linenumber=None):
     if len(tokens) > 1:
         key = tokens[1]
 
-    return dispatch(line, key, value, linenumber)
+    return dispatch(line, pkg, key, value, linenumber)
 
 
 def insert_at_none(tree, value):
