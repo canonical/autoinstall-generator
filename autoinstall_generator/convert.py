@@ -161,7 +161,8 @@ def fragment(frag, line, lineno):
 def debconf_fragment(value, line, lineno):
     chunks = line.split(' ')
     key = chunks[1]
-    partial = ' '.join(chunks[1:])
+    package = key.split('/')[0]
+    partial = ' '.join([package] + chunks[1:])
     return fragment({'debconf-selections': {key: partial}}, line, lineno)
 
 
