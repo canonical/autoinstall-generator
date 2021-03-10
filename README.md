@@ -6,9 +6,10 @@
 Objective: Ingest Debian preseed format file(s), and provide compatible
 Subiquity autoinstall in response.
 
-Project Status: Closing on a usable feature set.  Some basic support is present
-but there is room for improvement.  Not yet very well tested.  Netplan output
-probably not yet correct.
+Project Status: First public release.  Some basic support is present but there
+is room for improvement.  Several directive types have only partial support,
+including network.  Partition handling is very basic and only identifies 'lvm'
+or 'normal' types.  Pre/post command support not yet handled.
 
 ## Usage
 
