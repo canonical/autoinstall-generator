@@ -160,10 +160,8 @@ def fragment(frag, line, lineno):
 
 def debconf_fragment(value, line, lineno):
     chunks = line.split(' ')
-    key = chunks[1]
-    package = key.split('/')[0]
-    partial = ' '.join([package] + chunks[1:])
-    return fragment({'debconf-selections': {key: partial}}, line, lineno)
+    key = f'{chunks[0]} {chunks[1]}'
+    return fragment({'debconf-selections': {key: line}}, line, lineno)
 
 
 def netmask(value, line, lineno):
@@ -232,24 +230,7 @@ preseed_map = {
 }
 
 
-# d-i directives that start with these are presumed intended for the
-# installer, not the target system.
-installer_directives = [
-    'clock-setup',
-    'debian-installer',
-    'grub-installer',
-    'finish-install',
-    'keyboard-configuration',
-    'localechooser',
-    'mirror',
-    'netcfg',
-    'partman',
-    'passwd',
-    'time',
-]
-
-
-def dispatch(line, key, value, linenumber):
+def dispatch(line, pkg, key, value, linenumber):
     output = {}
 
     if key in preseed_map:
@@ -263,10 +244,9 @@ def dispatch(line, key, value, linenumber):
             return Directive(output, line, convert_type, linenumber)
     else:
         # is this an installer item we don't support?
-        for prefix in installer_directives:
-            if key.startswith(prefix):
-                return Directive({}, line, ConversionType.Unsupported,
-                                 linenumber)
+        if pkg == 'd-i':
+            return Directive({}, line, ConversionType.Unsupported,
+                             linenumber)
 
         return debconf_fragment(value, line, linenumber)
 
@@ -285,14 +265,19 @@ def convert(line, linenumber=None):
 
     trimmed = line.strip()
     tokens = trimmed.split(' ')
-    if tokens[0] != 'd-i':
+    pkg = tokens[0]
+    if pkg.startswith('#') or not pkg:
         return Directive({}, line, ConversionType.PassThru, linenumber)
 
     value = ''
     if len(tokens) > 3:
         value = ' '.join(tokens[3:])
 
-    return dispatch(line, tokens[1], value, linenumber)
+    key = ''
+    if len(tokens) > 1:
+        key = tokens[1]
+
+    return dispatch(line, pkg, key, value, linenumber)
 
 
 def insert_at_none(tree, value):
