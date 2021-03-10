@@ -29,4 +29,4 @@ or 'normal' types.  Pre/post command support not yet handled.
 ## Feedback
 
 Please direct bugs and feature requests to the project on
-[Launchpad](https://launchpad.net/autoinstall-generator).
+[Launchpad](https://bugs.launchpad.net/autoinstall-generator/+filebug).
