@@ -131,14 +131,14 @@ def test_netmask_bits():
 
 def test_di_gateway():
     value = '192.168.1.1'
-    one_to_one(f'd-i netcfg/get_gateway string {value}',
-               {'network': {
-                   'version': 2,
-                   'ethernets': {'any': {
-                       'match': {'name': 'en*'},
-                       'gateway4': value}
-                   }
-               }})
+    dependent(f'd-i netcfg/get_gateway string {value}',
+              {'network': {
+                  'version': 2,
+                  'ethernets': {'any': {
+                      'match': {'name': 'en*'},
+                      'gateway4': value}
+                  }
+              }})
 
 
 def test_di_address_netmask():
@@ -343,3 +343,16 @@ a: |
   d
 '''
     assert expected == actual
+
+
+def test_choose_interface_eth1():
+    gw = '192.168.1.1'
+    iface = 'eth1'
+    dependent([f'd-i netcfg/get_gateway string {gw}',
+               f'd-i netcfg/choose_interface select {iface}'],
+              {'network': {
+                  'version': 2,
+                  'ethernets': {iface: {
+                      'gateway4': gw}
+                  }
+              }})
