@@ -42,7 +42,7 @@ def main():
         infile = sys.stdin
     else:
         infile_needs_close = True
-        infile = open(args.inpath, 'r')
+        infile = open(args.inpath, 'r', encoding='utf-8')
 
     out = convert_file(infile, args)
     args.outfile.write(out)

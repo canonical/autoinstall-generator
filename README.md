@@ -9,7 +9,8 @@ Subiquity autoinstall in response.
 Project Status: First public release.  Some basic support is present but there
 is room for improvement.  Several directive types have only partial support,
 including network.  Partition handling is very basic and only identifies 'lvm'
-or 'normal' types.  Pre/post command support not yet handled.
+or 'normal' types.  Pre/post command support not yet handled.  Multiline
+directives not yet supported.  Input files must be utf-8.
 
 ## Usage
 
