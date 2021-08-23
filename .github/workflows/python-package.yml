@@ -25,8 +25,10 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install Tox and any other packages
-      run: pip install tox
+      run: pip install tox pyyaml jsonschema setuptools wheel
     - name: Run linter
       run: tox -e lint
     - name: Run tests
       run: tox -e test
+    - name: Run integration
+      run: ./scripts/integration-test.sh
