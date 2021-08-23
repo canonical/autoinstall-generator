@@ -25,7 +25,7 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install Tox and any other packages
-      run: pip install tox
+      run: sudo apt install tox python3-yaml python3-jsonschema
     - name: Run linter
       run: tox -e lint
     - name: Run tests
