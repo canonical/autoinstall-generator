@@ -10,5 +10,7 @@ make build
 
 for cfg in test/* ; do
     PYTHONPATH=$(realpath .) \
-        autoinstall_generator/cmd/autoinstall-generator.py $cfg -cd
+        autoinstall_generator/cmd/autoinstall-generator.py -cd $cfg
+    PYTHONPATH=$(realpath .) \
+        autoinstall_generator/cmd/autoinstall-generator.py -cd - < $cfg
 done
