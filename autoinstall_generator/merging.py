@@ -209,7 +209,10 @@ def convert_file(preseed_file, args):
     coalesced = buckets.coalesce()
     result_dict = merge(coalesced)
 
-    validate_yaml(result_dict)
+    try:
+        validate_yaml(result_dict)
+    except jsonschema.exceptions.ValidationError:
+        print('# Warning: resulting autoinstall is missing required data')
 
     result = ''
     if args.cloud:
