@@ -211,8 +211,9 @@ def convert_file(preseed_file, args):
 
     try:
         validate_yaml(result_dict)
-    except jsonschema.exceptions.ValidationError:
+    except jsonschema.exceptions.ValidationError as ve:
         print('# Warning: resulting autoinstall is missing required data')
+        print('# ' + ve.message)
 
     result = ''
     if args.cloud:
