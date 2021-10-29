@@ -202,8 +202,20 @@ def dump_yaml(tree):
 def convert_file(preseed_file, args):
     directives = implied_directives()
 
+    fullDirective = None
     for idx, line in enumerate(preseed_file.readlines()):
-        directives.append(convert(line.strip('\n'), idx + 1))
+        line = line.strip('\n')
+        cleanedLine = line.rstrip('\\').strip(' ')
+
+        if fullDirective is None:
+            fullDirective = cleanedLine
+            startIdx = idx
+        else:
+            fullDirective = ' '.join([fullDirective, cleanedLine])
+
+        if not line.endswith('\\'):
+            directives.append(convert(fullDirective, startIdx + 1))
+            fullDirective = None
 
     buckets = bucketize(directives)
     coalesced = buckets.coalesce()
